@@ -1,0 +1,38 @@
+name: Restore original WAV case-insensitive lookup V173
+on:
+  push:
+    paths:
+      - 'scripts/upgrade_v173.py'
+      - '.github/workflows/upgrade-v173.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Upgrade verified V172 into V173
+        run: python3 scripts/upgrade_v173.py
+      - name: Test original map/title/commander/WAV parity and commit
+        run: |
+          python3 tests/test_original_parity.py index.html
+          python3 tests/test_original_parity.py monarch_v173_lite.html
+          python3 - <<'PY'
+          from pathlib import Path
+          a=Path('index.html').read_bytes()
+          assert a==Path('monarch_v173_lite.html').read_bytes()
+          assert b'name.toLowerCase()' in a and b'name.toUpperCase()' in a
+          print('PASS V173 HTML copies and case-insensitive WAV lookup')
+          PY
+          if ! git diff --quiet -- index.html || [ -n "$(git ls-files --others --exclude-standard monarch_v173_lite.html)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add index.html monarch_v173_lite.html
+            git commit -m 'Release V173: resolve original WAV filenames case-insensitively'
+            git push
+          else
+            echo 'V173 already current'
+          fi
