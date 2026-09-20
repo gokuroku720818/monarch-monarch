@@ -1,25 +1,22 @@
-# 모나크모나크 HTML 복원 프로젝트 — V171
+# 모나크모나크 — V172 HTML 복원판
 
-원작을 대조하며 개발 중인 비공식 HTML 복원판입니다. 원작과 1:1 동일하다고 검증된 버전은 아닙니다.
+원작 규칙과 자산을 비교하며 개발 중인 비공식 복원판입니다. 전체 게임의 원작 동일성은 아직 검증되지 않았습니다.
 
-## 현재 업로드 상태
+## GitHub에 업로드된 실행 파일
 
-README와 원작 비교 보고서는 업로드되어 있습니다. **게임 본편은 아직 GitHub에 업로드되지 않았습니다.** 대화에서 제공한 `monarch-v171-github-upload.zip`을 다운로드하고 압축을 풀어 아래 3개 파일을 저장소 루트에 올려야 플레이할 수 있습니다.
+- **`index.html`** — V172 경량판 기본 진입점. 스프라이트·75맵·원본 WAV 효과음을 포함합니다. 저장소에 없는 배경음악 JS를 불러오지 않으므로 파일 단독 실행이 가능합니다.
+- **`monarch_v172_lite.html`** — 위 `index.html`과 바이트 동일한 보관본.
+- **`scripts/upgrade_v172.py`**, **`.github/workflows/upgrade-v172.yml`** — V171 게임 HTML의 미디어 데이터를 변조하지 않고 UI 버그를 수정한 생성 코드와 배포 워크플로.
+- **`V172_ORIGINAL_COMPARISON_REPORT.md`** — 수정 및 검증 범위와 미완료 항목.
 
-- `index.html` — 전체판 HTML (음악 스크립트를 외부 파일로 분리한 GitHub Pages 버전).
-- `monarch-original-midi.js` — 전체판에 필수인 배경음악 데이터·재생 스크립트. 반드시 `index.html`과 같은 폴더에 둡니다.
-- `monarch_v171_lite.html` — 배경음악 제외 경량판. 단독으로 열 수 있습니다.
+### 원작 배경음악
 
-`V171_ORIGINAL_COMPARISON_REPORT.md`는 이미 업로드했으므로 다시 올릴 필요가 없습니다.
+GitHub에는 원본 OGG/MIDI 재생용 `monarch-original-midi.js`가 **업로드되지 않았습니다.** 따라서 GitHub 실행판은 배경음악이 빠진 경량판입니다. ChatGPT 대화에서 별도로 제공한 V172 전체 HTML에는 기존 원본 13곡이 들어 있습니다. 원작 소프트웨어와 음악의 권리는 각각의 권리자에게 있습니다.
 
-## GitHub Pages
+### GitHub Pages
 
-게임 파일을 `main` 브랜치 루트에 업로드한 뒤 Settings → Pages → Build and deployment → Deploy from a branch → `main` / `/(root)` → Save. 실제 게시 여부는 Pages 설정에서 확인하세요.
+공개 사이트를 이용하려면 Settings → Pages → Build and deployment → Deploy from a branch → `main` / `/(root)`를 지정하세요. 실제 GitHub Pages 활성화와 URL 접속 여부는 별도로 확인해야 합니다.
 
-## 전체판 분리 이유
+### V172 변경점
 
-원래 단일 HTML(약 26.3MB)은 GitHub 웹 업로드 파일 제한을 넘을 수 있어, 기존 게임·UI 스크립트는 변경하지 않고 마지막 MIDI 스크립트만 약 19.9MB의 별도 JS로 분리했습니다. 두 파일을 같은 디렉터리에 두면 원래 스크립트의 로딩 순서를 유지합니다. 전체 브라우저 동작에 대한 독립적인 장시간 검증까지 끝났다는 뜻은 아닙니다.
-
-## 유의
-
-원작 자산과 음악의 권리는 각 권리자에게 있습니다. 공식 배포판이 아니며 공개 배포 권한은 별도 확인이 필요합니다.
+드래그 선택이 발밑 좌표만 검사해 보이는 부대를 놓치던 문제를 32×48 스프라이트 영역과 드래그 사각형의 겹침 검사로 수정했습니다. 버전 배지와 제목 표시도 정정했습니다. 게임플레이 엔진, 75맵 음악 매핑 및 원본 스프라이트 데이터는 유지합니다.
