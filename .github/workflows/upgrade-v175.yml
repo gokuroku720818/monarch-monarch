@@ -1,0 +1,46 @@
+name: Release V175 touch focus recovery
+on:
+  push:
+    paths:
+      - 'scripts/upgrade_v175.py'
+      - '.github/workflows/upgrade-v175.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Apply verified V174 to V175 patch
+        run: python3 scripts/upgrade_v175.py
+      - name: Validate original data, touch recovery and script syntax
+        run: |
+          python3 tests/test_original_parity.py index.html
+          python3 tests/test_original_parity.py monarch_v175_lite.html
+          node tests/test_touch_focus_adapter.js index.html
+          node tests/test_touch_focus_adapter.js monarch_v175_lite.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+          a=Path('index.html').read_bytes()
+          assert a==Path('monarch_v175_lite.html').read_bytes()
+          scripts=re.findall(r'<script(?:\s[^>]*)?>(.*?)</script>',a.decode('utf8'),re.S)
+          assert len(scripts)==4, f'Expected 4 scripts, found {len(scripts)}'
+          for i,script in enumerate(scripts):
+              tmp=Path('/tmp/monarch-v175-'+str(i)+'.js')
+              tmp.write_text(script)
+              subprocess.run(['node','--check',str(tmp)],check=True)
+          print('PASS 4 JS blocks and identical V175 release files')
+          PY
+          if ! git diff --quiet -- index.html || [ -n "$(git ls-files --others --exclude-standard monarch_v175_lite.html)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add index.html monarch_v175_lite.html
+            git commit -m 'Release V175: restore touch selection after focus interruption'
+            git push
+          else
+            echo 'V175 already current'
+          fi
