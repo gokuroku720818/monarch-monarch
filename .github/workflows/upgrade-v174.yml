@@ -1,0 +1,44 @@
+name: Release V174 original-style touch marquee
+on:
+  push:
+    paths:
+      - 'scripts/upgrade_v174.py'
+      - '.github/workflows/upgrade-v174.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Generate V174 from verified GitHub V173 blob
+        run: python3 scripts/upgrade_v174.py
+      - name: Verify original resources and browser JavaScript syntax
+        run: |
+          python3 tests/test_original_parity.py index.html
+          python3 tests/test_original_parity.py monarch_v174_lite.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess
+          a=Path('index.html').read_bytes()
+          assert a==Path('monarch_v174_lite.html').read_bytes()
+          assert b'Original Restoration V174 LITE' in a
+          assert b'marqueeTouchId' in a and a.count(b"addEventListener('touch")==4
+          for i,s in enumerate(re.findall(r'<script\b[^>]*>(.*?)</script>',a.decode('utf-8'),re.S|re.I)):
+            f=Path('/tmp')/f'monarch_v174_{i}.js'
+            f.write_text(s,encoding='utf-8')
+            subprocess.run(['node','--check',str(f)],check=True)
+          print('PASS V174 original resources, identical release files, JS syntax')
+          PY
+          if ! git diff --quiet -- index.html || [ -n "$(git ls-files --others --exclude-standard monarch_v174_lite.html)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add index.html monarch_v174_lite.html
+            git commit -m 'Release V174: restore touch marquee using original mouse selection'
+            git push
+          else
+            echo 'V174 already current'
+          fi
