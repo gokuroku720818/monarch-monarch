@@ -1,0 +1,49 @@
+name: Release V177 commander defeat command cleanup
+on:
+  push:
+    paths:
+      - 'scripts/upgrade_v177.py'
+      - 'tests/test_king_defeat_cleanup.js'
+      - '.github/workflows/upgrade-v177.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Generate V177 from exact V176 Git blob
+        run: python3 scripts/upgrade_v177.py
+      - name: Verify original assets, commander defeat and prior regressions
+        run: |
+          python3 tests/test_original_parity.py index.html
+          python3 tests/test_original_parity.py monarch_v177_lite.html
+          node tests/test_king_defeat_cleanup.js index.html
+          node tests/test_recycled_slot_cleanup.js index.html
+          node tests/test_touch_focus_adapter.js index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess, tempfile
+          a=Path('index.html').read_bytes()
+          b=Path('monarch_v177_lite.html').read_bytes()
+          assert a==b and b'Original Restoration V177 LITE' in a
+          assert b'monarch-original-midi.js' not in a
+          blocks=[m.group(1) for m in re.finditer(r'<script\b[^>]*>(.*?)</script\s*>',a.decode('utf8'),re.I|re.S) if m.group(1).strip()]
+          with tempfile.TemporaryDirectory() as d:
+              for i,js in enumerate(blocks):
+                  p=Path(d)/f'game_{i}.js';p.write_text(js)
+                  subprocess.run(['node','--check',str(p)],check=True)
+          print(f'PASS V177 release/index parity and {len(blocks)} JavaScript blocks')
+          PY
+          if ! git diff --quiet -- index.html || [ -n "$(git ls-files --others --exclude-standard monarch_v177_lite.html)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add index.html monarch_v177_lite.html
+            git commit -m 'Release V177: clear defeated commander command UI'
+            git push
+          else
+            echo 'V177 already current'
+          fi
