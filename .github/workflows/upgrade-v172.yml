@@ -1,0 +1,38 @@
+name: Upgrade original HTML to V172 LITE
+on:
+  push:
+    paths:
+      - 'scripts/upgrade_v172.py'
+      - '.github/workflows/upgrade-v172.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Generate standalone V172 Lite from verified V171 blob
+        run: python3 scripts/upgrade_v172.py
+      - name: Verify HTML and commit generated game
+        run: |
+          python3 - <<'PYVERIFY'
+          from pathlib import Path
+          a=Path('index.html').read_bytes()
+          b=Path('monarch_v172_lite.html').read_bytes()
+          assert a==b and b'Original Restoration V172 LITE' in a
+          assert b'monarch-original-midi.js' not in a
+          assert b'worldToScreen(u.x,u.y,u.z+.12);if(q.x+16*zoom>=x1' in a
+          print('verified: V172 standalone index and lite files, byte-identical')
+          PYVERIFY
+          if ! git diff --quiet -- index.html || [ -n "$(git ls-files --others --exclude-standard monarch_v172_lite.html)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add index.html monarch_v172_lite.html
+            git commit -m 'Release V172: fix marquee selection and publish playable Lite'
+            git push
+          else
+            echo 'V172 is already current; nothing to commit.'
+          fi
