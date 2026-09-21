@@ -1,0 +1,59 @@
+name: Release V182 fence command workability
+on:
+  push:
+    paths:
+      - 'scripts/upgrade_v182.py'
+      - 'tests/test_fence_command_validity.js'
+      - '.github/workflows/upgrade-v182.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Generate V182 from exact V181 Git blob
+        run: python3 scripts/upgrade_v182.py
+      - name: Verify native resources and all preceding game regressions
+        run: |
+          python3 tests/test_original_parity.py index.html
+          python3 tests/test_original_parity.py monarch_v182_lite.html
+          node tests/test_fence_command_validity.js index.html
+          node tests/test_fence_command_validity.js monarch_v182_lite.html
+          node tests/test_work_height.js index.html
+          node tests/test_work_height.js monarch_v182_lite.html
+          node tests/test_command_pause.js index.html
+          node tests/test_command_pause.js monarch_v182_lite.html
+          node tests/test_fence_order_height.js index.html
+          node tests/test_bridge_deck_height.js index.html
+          node tests/test_king_defeat_cleanup.js index.html
+          node tests/test_recycled_slot_cleanup.js index.html
+          node tests/test_touch_focus_adapter.js index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess, tempfile
+          a=Path('index.html').read_bytes()
+          b=Path('monarch_v182_lite.html').read_bytes()
+          assert a==b and b'Original Restoration V182 LITE' in a
+          assert b'monarch-original-midi.js' not in a
+          blocks=[m.group(1) for m in re.finditer(r'<script\b[^>]*>(.*?)</script\s*>',a.decode('utf8'),re.I|re.S) if m.group(1).strip()]
+          with tempfile.TemporaryDirectory() as td:
+            for i,js in enumerate(blocks):
+              f=Path(td)/f'script_{i}.js';f.write_text(js)
+              subprocess.run(['node','--check',str(f)],check=True)
+          print(f'PASS V182 exact archive parity and {len(blocks)} JavaScript blocks')
+          PY
+      - name: Publish tested V182 index and versioned archive
+        run: |
+          if ! git diff --quiet -- index.html || [ -n "$(git ls-files --others --exclude-standard monarch_v182_lite.html)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add index.html monarch_v182_lite.html
+            git commit -m 'Release V182: reject impossible and complete fence commands'
+            git push
+          else
+            echo 'V182 already released'
+          fi
