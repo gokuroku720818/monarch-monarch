@@ -1,0 +1,53 @@
+name: Release V179 fence work stand parity
+on:
+  push:
+    paths:
+      - 'scripts/upgrade_v179.py'
+      - 'tests/test_fence_order_height.js'
+      - '.github/workflows/upgrade-v179.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Generate from exact V178 Git blob
+        run: python3 scripts/upgrade_v179.py
+      - name: Verify original assets and previous gameplay regressions
+        run: |
+          python3 tests/test_original_parity.py index.html
+          python3 tests/test_original_parity.py monarch_v179_lite.html
+          node tests/test_fence_order_height.js index.html
+          node tests/test_bridge_deck_height.js index.html
+          node tests/test_king_defeat_cleanup.js index.html
+          node tests/test_recycled_slot_cleanup.js index.html
+          node tests/test_touch_focus_adapter.js index.html
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess, tempfile
+          a=Path('index.html').read_bytes()
+          b=Path('monarch_v179_lite.html').read_bytes()
+          assert a==b and b'Original Restoration V179 LITE' in a
+          assert b'monarch-original-midi.js' not in a
+          blocks=[m.group(1) for m in re.finditer(r'<script\b[^>]*>(.*?)</script\s*>',a.decode('utf8'),re.I|re.S) if m.group(1).strip()]
+          with tempfile.TemporaryDirectory() as td:
+            for i,js in enumerate(blocks):
+              f=Path(td)/f'script_{i}.js';f.write_text(js)
+              subprocess.run(['node','--check',str(f)],check=True)
+          print(f'PASS V179 index/release parity and {len(blocks)} JavaScript blocks')
+          PY
+      - name: Publish tested index and archived release
+        run: |
+          if ! git diff --quiet -- index.html || [ -n "$(git ls-files --others --exclude-standard monarch_v179_lite.html)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add index.html monarch_v179_lite.html
+            git commit -m 'Release V179: choose reachable fence work stands'
+            git push
+          else
+            echo 'V179 already released'
+          fi
