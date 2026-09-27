@@ -10,7 +10,7 @@ if len(html)>10_000_000:
     html,n=re.subn(r'<script id="monarch-original-midi-playback">[\s\S]*?</script>','<script id="monarch-original-midi-playback"></script>',html,count=1)
     assert n==1
 with sync_playwright() as p:
-    browser=p.chromium.launch(headless=True,executable_path='/usr/bin/chromium',args=['--no-sandbox'])
+    browser=p.chromium.launch(headless=True,executable_path='/usr/bin/chromium' if Path('/usr/bin/chromium').exists() else None,args=['--no-sandbox'])
     page=browser.new_page(viewport={'width':1100,'height':800}); page_errors=[]
     page.on('pageerror',lambda e:page_errors.append(str(e)))
     page.set_content(html,wait_until='domcontentloaded',timeout=120000)
