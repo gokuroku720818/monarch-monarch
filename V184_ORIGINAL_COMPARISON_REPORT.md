@@ -57,3 +57,13 @@ V183의 Action 10 dispatcher는 실행 중 `destructibleCoreAt(a.x,a.y)`로 열 
 - 원본 Windows 실행 파일과 동일 입력을 장시간 자동 재생하여 AI·경제·전투·승패를 동적으로 1:1 비교한 상태는 아직 아니다.
 - GitHub 저장소에는 BGM 포함 FULL HTML을 커밋하지 않으므로 GitHub Actions는 배포 대상 LITE를 직접 생성·검증한다. FULL은 로컬 exact-blob 패치 및 별도 회귀/자산 검증 대상이다.
 - 75-stage invariant 검사는 현재 각 맵 10 pass의 bounded smoke이며 장시간 동등성 증명이 아니다.
+
+
+## GitHub Actions 검증
+
+- 격리 브랜치 `restore/v184-parity`의 workflow run `36332529512` 성공.
+- 모든 단계가 success: exact V183 blob 생성, 패리티 manifest/audit, 원본 자원, V173~V183 focused regressions, V184 exact-z, Chromium, 75-stage invariant, JS syntax.
+- 검증 후 bot commit `728da0fa0f327c08302aa15c8513dab9d1a76b47`가 테스트된 `index.html` 및 `monarch_v184_lite.html`을 staging 브랜치에 커밋.
+- 두 파일 Git blob은 모두 `78ace5e2a00d34510dba3a0606a0fcd8aa022cca`로 로컬 검증 V184 LITE와 일치.
+- V184 LITE SHA-256: `e887a76363de9aa1b5c6ce32c70a6c31d44a67c8a2d9e71201e8997f7b67aba7`.
+- V184 FULL SHA-256: `ee401b30cec3636b082d419ac0abc15746dca9064d60ab03e043215f72c126fc`.
