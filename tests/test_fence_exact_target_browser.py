@@ -5,7 +5,7 @@ from playwright.sync_api import sync_playwright
 
 files=sys.argv[1:] or ['monarch_v184_lite.html']
 with sync_playwright() as playwright:
-    browser=playwright.chromium.launch(headless=True,executable_path='/usr/bin/chromium',args=['--no-sandbox'])
+    browser=playwright.chromium.launch(headless=True,executable_path='/usr/bin/chromium' if Path('/usr/bin/chromium').exists() else None,args=['--no-sandbox'])
     for filename in files:
         page=browser.new_page(viewport={'width':1280,'height':900})
         errors=[]
