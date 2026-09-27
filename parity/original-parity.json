@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "baseline_version": "V183",
+  "rules": [
+    {
+      "id": "action.original-adjacency-height",
+      "domain": "action-adjacency",
+      "status": "CONFIRMED",
+      "description": "Action targets must be exactly one cardinal cell away; target z relative to the actor is -2 through +3.",
+      "evidence": [
+        {"type":"exe","source":"lm_win.exe","address":"0x4306a4","note":"V183 source comment and V181 regression evidence."},
+        {"type":"report","source":"V181_ORIGINAL_COMPARISON_REPORT.md"}
+      ],
+      "implementation": ["originalActionAdjacent","commandAvailability","issueSpecificWork"],
+      "tests": ["tests/test_work_height.js"],
+      "limitations": ["Static executable evidence and restoration regressions do not prove all action dispatch timing."],
+      "first_restored_version": "V181"
+    },
+    {
+      "id": "bridge.deck-height",
+      "domain": "construction-destruction",
+      "status": "CONFIRMED",
+      "description": "A bridge ordered on water validates action height at the future deck z+1 rather than the water z.",
+      "evidence": [
+        {"type":"exe","source":"lm_win.exe","address":"0x433469","note":"Bridge worker path."},
+        {"type":"report","source":"V178_ORIGINAL_COMPARISON_REPORT.md"}
+      ],
+      "implementation": ["workBridge","bridgeOrderStand"],
+      "tests": ["tests/test_bridge_deck_height.js"],
+      "limitations": ["Not every original bridge-building scene has been dynamically compared."],
+      "first_restored_version": "V178"
+    },
+    {
+      "id": "bridge.completed-repair-gate",
+      "domain": "construction-destruction",
+      "status": "CONFIRMED",
+      "description": "A completed bridge at DF100 must reject bridge repair/build orders; damaged completed bridges remain repairable.",
+      "evidence": [
+        {"type":"exe","source":"lm_win.exe","address":"0x433469","note":"Native-derived workBridge repair path rejects missing<=0."},
+        {"type":"report","source":"V183_ORIGINAL_COMPARISON_REPORT.md"}
+      ],
+      "implementation": ["workBridge","bridgeOrderStand","commandAvailability","issueBridge"],
+      "tests": ["tests/test_bridge_command_validity.js"],
+      "limitations": ["The HTML repair rule is statically matched; whole-game bridge behavior remains partially unverified dynamically."],
+      "first_restored_version": "V183"
+    },
+    {
+      "id": "fence.workability",
+      "domain": "construction-destruction",
+      "status": "CONFIRMED",
+      "description": "Fence orders must reject DF200 complete cores, orphan caps, blocked two-level construction space, and out-of-range construction height while preserving damaged/new valid cases.",
+      "evidence": [
+        {"type":"exe","source":"lm_win.exe","address":"0x433d7a","note":"Fence worker path."},
+        {"type":"report","source":"V182_ORIGINAL_COMPARISON_REPORT.md"}
+      ],
+      "implementation": ["workFence","commandAvailability","issueFence"],
+      "tests": ["tests/test_fence_command_validity.js"],
+      "limitations": ["Long-run V182 75x100 tick test did not complete; subsequent releases retain the focused regression."],
+      "first_restored_version": "V182"
+    },
+    {
+      "id": "destroy-fence.exact-target-z",
+      "domain": "construction-destruction",
+      "status": "CONFIRMED",
+      "description": "Action 10 receives a packed target containing x/y/z; execution must keep the normalized stored z instead of re-searching the x/y column.",
+      "evidence": [
+        {"type":"exe","source":"lm_win.exe","address":"0x434c57..0x434d45","note":"The worker decodes x/y/z directly from its target pointer and indexes the map at that packed level."},
+        {"type":"exe","source":"lm_win.exe","address":"0x43ba75..0x43ba84","note":"Dispatcher passes the unit target record at +0x16 directly to Action 10."},
+        {"type":"map","source":"M_032","note":"Real stage contains same-column fence cores at z=3 and z=38 used for the regression scenario."}
+      ],
+      "implementation": ["issueSpecificWork","attackDestructible","actionCode===10&&u.actionTarget"],
+      "tests": ["tests/test_fence_exact_target_height.js"],
+      "limitations": ["Confirmed from static target-pointer flow and M_032 regression; full original runtime timing remains to be compared dynamically."],
+      "first_restored_version": "V184"
+    },
+    {
+      "id": "ui.touch-adapter",
+      "domain": "input-ui",
+      "status": "BROWSER_ADAPTATION",
+      "description": "Touch focus/marquee recovery adapts original mouse interaction for mobile browsers and is not evidence of original Windows input semantics.",
+      "evidence": [{"type":"restoration","source":"V174-V175 reports"}],
+      "implementation": ["reconcileSelection"],
+      "tests": ["tests/test_touch_focus_adapter.js"],
+      "limitations": ["Must remain distinguishable from Original mode controls."],
+      "first_restored_version": "V174"
+    }
+  ]
+}
