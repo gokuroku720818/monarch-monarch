@@ -206,6 +206,57 @@
       "first_restored_version": "V185"
     },
     {
+      "id": "base.continue-funding-wait",
+      "domain": "construction-destruction",
+      "status": "CONFIRMED",
+      "description": "Continue-mode production-base planning may choose the next target below 100 resources; at the work cell, insufficient funds keep Action 4 active for a later retry instead of ending continue mode.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43e8bb..0x43e90e",
+          "note": "The base repeat wrapper calls generic planner 0x43eb4c without a treasury check."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43eb4c..0x43ec91",
+          "note": "The generic repeat planner selects and stores the next Action 4 target without reading faction treasury."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x4332cb..0x4332de",
+          "note": "At the actual base work cell, 0x430640 attempts to spend 100; insufficient funds return worker code 1."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x430640..0x43069e",
+          "note": "The treasury spender checks the active faction resource, deducts only when sufficient, and otherwise returns 0."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43b8df..0x43b8eb",
+          "note": "Base worker return 1 bypasses finish/retarget handling, leaving Action 4 active for a later pass."
+        }
+      ],
+      "implementation": [
+        "repeatCandidateFromStand",
+        "tryBuildBase",
+        "actionCode===4&&u.actionTarget"
+      ],
+      "tests": [
+        "tests/test_base_continue_funding_wait.js",
+        "tests/test_base_continue_funding_browser.py"
+      ],
+      "limitations": [
+        "Confirmed from static original control flow and browser regression; the original Windows executable is not dynamically captured."
+      ],
+      "first_restored_version": "V186"
+    },
+    {
       "id": "ui.touch-adapter",
       "domain": "input-ui",
       "status": "BROWSER_ADAPTATION",
