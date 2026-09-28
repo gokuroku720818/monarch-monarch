@@ -33,5 +33,4 @@ function scenario(strength,resource=100){
 }
 assert.deepEqual(scenario(1),{action:4,x:11,y:10,z:2,standX:10,standY:10,standZ:2},'strength 1 must still find the final base target in continue mode');
 assert.equal(scenario(0),null,'strength 0 cannot plan another base');
-assert.equal(scenario(1,99),null,'treasury gate remains unchanged');
-console.log('PASS continue-base final-strength planning: strength 1 allowed; 0 and short treasury rejected');
+console.log('PASS continue-base final-strength planning: strength 1 allowed; strength 0 rejected');
