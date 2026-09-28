@@ -257,6 +257,51 @@
       "first_restored_version": "V186"
     },
     {
+      "id": "destroy-fence.same-pass-finish",
+      "domain": "construction-destruction",
+      "status": "CONFIRMED",
+      "description": "When Action 10 removes a zero-DF fence core, the dispatcher finishes or continues the work in that same processing pass rather than leaving Action 10 active for one extra pass.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x434da2..0x434e4f",
+          "note": "Action 10 clamps work amount to structure DF; when the resulting work amount is zero it removes the core/cap, plays SFX26, and returns 0."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x434e54..0x435030",
+          "note": "A nonzero-DF strike updates the staged fence and returns 3, so only physical removal takes the finish path."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43ba75..0x43bacb",
+          "note": "Dispatcher skips completion only for worker return 3; any other return calls 0x43bded immediately in the same pass."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43bded..0x43be63",
+          "note": "Finish handler resolves continue/wait/normal work state immediately."
+        }
+      ],
+      "implementation": [
+        "attackDestructible",
+        "finishWorkAction",
+        "actionCode===10&&u.actionTarget"
+      ],
+      "tests": [
+        "tests/test_fence_finish_same_pass.js",
+        "tests/test_fence_finish_same_pass_browser.py"
+      ],
+      "limitations": [
+        "Confirmed from static original return-code flow plus browser regression; no direct Windows runtime capture is available."
+      ],
+      "first_restored_version": "V187"
+    },
+    {
       "id": "ui.touch-adapter",
       "domain": "input-ui",
       "status": "BROWSER_ADAPTATION",
