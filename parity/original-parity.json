@@ -355,6 +355,46 @@
         "Must remain distinguishable from Original mode controls."
       ],
       "first_restored_version": "V174"
+    },
+    {
+      "id": "movement.path-reconstruction-tie",
+      "domain": "movement-pathfinding",
+      "status": "CONFIRMED",
+      "description": "After the source-side distance flood, path bytes are reconstructed from the destination toward the source by probing cardinal direction bytes 0,2,4,6 and accepting only a strictly lower distance. Equal-length shortest routes therefore use destination-side west/north/east/south tie order rather than source-side first-predecessor order.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43ef84..0x43f44e",
+          "note": "The native route flood stores distance values while expanding cardinal direction bytes 0,2,4,6 from the source."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x4427fb..0x442898",
+          "note": "Route reconstruction resets direction to 0, advances by 2 through 0,2,4,6, accepts only candidate distance < current best (JGE skips ties), and stores (direction+4)&7 as the forward path byte."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43924b; 0x43d575; 0x43dbad; 0x43df14; 0x43ec37",
+          "note": "The same 0x4424e0 reconstruction routine is called from player/general movement and multiple AI route-planning paths."
+        }
+      ],
+      "implementation": [
+        "originalCardinalBacktrack",
+        "route",
+        "routeWithOriginalAiBlocks",
+        "pathFromOriginalReachMap"
+      ],
+      "tests": [
+        "tests/test_route_tie_backtrack.js",
+        "tests/test_route_tie_backtrack_browser.py"
+      ],
+      "limitations": [
+        "V189 restores the cardinal tie/backtrack rule for the HTML walk graph. Native special vertical/elevator path bytes handled separately around 0x4425fd..0x4427f6 are not newly claimed by this rule."
+      ],
+      "first_restored_version": "V189"
     }
   ]
 }
