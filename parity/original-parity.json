@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "baseline_version": "V189",
+  "baseline_version": "V183",
   "rules": [
     {
       "id": "action.original-adjacency-height",
