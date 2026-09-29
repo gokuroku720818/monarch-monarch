@@ -1,15 +1,23 @@
-# 모나크모나크 — V188 원본 패리티 복원판
+# 모나크모나크 — V189 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V188도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V189도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V188 LITE 웹 기본판.
-- `monarch_v188_lite.html`: 배포본과 바이트 동일한 V188 보관본.
+- `index.html`: V189 LITE 웹 기본판.
+- `monarch_v189_lite.html`: 배포본과 바이트 동일한 V189 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V189: 최단경로 동률 시 원본의 목표측 역추적 순서 복원
+
+원본 `lm_win.exe`는 출발점에서 거리맵을 만든 뒤, 목표점에서 출발점 방향으로 `0,2,4,6`(서→북→동→남)을 조사해 **거리값이 엄격히 더 작은 칸만** 선택하며 경로 바이트를 역구성합니다. V188은 BFS에서 처음 발견한 predecessor를 그대로 경로로 사용했기 때문에 최단거리 길이는 같아도 대칭 우회 상황의 실제 경로 모양이 원본과 달랐습니다.
+
+V189는 `originalCardinalBacktrack()`을 추가해 일반 이동, AI block 경로, AI reach-map 경로가 모두 원본 `0x4424e0 / 0x4427fb` 방식으로 목표측에서 역추적하도록 맞췄습니다. 4×4 평지의 단일 장애물 회귀에서 원본과 동일한 좌측→하단 우회와 방향 바이트 `6,6,6,4,4,4`를 Chromium 실제 엔진에서 확인했습니다.
+
+V189 보고서: [V189_ORIGINAL_COMPARISON_REPORT.md](V189_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V188: 울타리 제거와 Action 10 종료를 같은 패스에서 처리
 
@@ -64,23 +72,25 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V188 검증 범위
+## V189 검증 범위
 
-GitHub Actions run `36502668907`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36531198664`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
-- V173~V187 focused regressions
-- V188 same-pass 울타리 종료 Node/Chromium regression
+- V173~V188 focused regressions
+- V189 목표측 route tie backtrack Node/Chromium regression
+- V188 same-pass 울타리 종료 Chromium regression
 - V187 자기 기지 제외 Chromium regression
-- V187→V188 역패치 전체 바이트 동일성
+- V188→V189 역패치 전체 바이트 동일성
 - STAGES/SOUND_DATA 및 Base64 23개 동일
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V188 LITE Git blob: `dd5e3442c36bf4b7cd14377b8990379dfed534f7`.
+테스트된 V189 LITE Git blob: `6acb643ee40954a53f2e71c86caea10969e986f8`.
 
 ## 이전 수정
 
+- V188: 울타리 제거와 Action 10 종료를 같은 simulation pass에서 처리.
 - V187: 연속 생산기지 파괴에서 자기 진영 생산기지 제외.
 - V186: 계속건설 중 자금 부족 시 목표 유지 및 자금 회복 후 재시도.
 - V185: 병력 1인 계속건설 부대의 마지막 생산기지 목표 허용.
@@ -94,4 +104,4 @@ GitHub Actions run `36502668907`에서 다음 게이트가 모두 통과했습�
 
 ## 아직 남은 원작 대조
 
-이동/길찾기, 전투, 생산·세금·경제, CPU AI, 중립 AI, 난수·타이밍, 승패·점수, 원본 Windows UI/입력을 영역별로 계속 원본 EXE와 대조합니다. 비용이 드는 외부 서버는 사용하지 않고, 원본 EXE 정적 분석 + 원본 데이터 + Chromium + GitHub Actions로 계속 복원합니다.
+이동/길찾기 추가 세부 규칙, 전투, 생산·세금·경제, CPU AI, 중립 AI, 난수·타이밍, 승패·점수, 원본 Windows UI/입력을 영역별로 계속 원본 EXE와 대조합니다. 비용이 드는 외부 서버는 사용하지 않고, 원본 EXE 정적 분석 + 원본 데이터 + Chromium + GitHub Actions로 계속 복원합니다.
