@@ -257,6 +257,39 @@
       "first_restored_version": "V186"
     },
     {
+      "id": "destroy-base.continue-excludes-own",
+      "domain": "construction-destruction",
+      "status": "CONFIRMED",
+      "description": "Continue-mode production-base destruction must exclude the acting faction's own base tile 29+f while retaining enemy base tiles 29..32.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43e90f..0x43e96a",
+          "note": "Action 8 repeat wrapper clears the eligibility table, marks tiles 29..32, then clears bit 0 for tile 29+current faction before calling the generic repeat planner."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43eb4c..0x43ec91",
+          "note": "The generic repeat planner writes the selected target and action 8 into the current unit when a candidate remains eligible."
+        }
+      ],
+      "implementation": [
+        "repeatCandidateFromStand",
+        "findRepeatWorkTarget",
+        "assignNextManualWork"
+      ],
+      "tests": [
+        "tests/test_destroybase_continue_excludes_own.js",
+        "tests/test_destroybase_continue_browser.py"
+      ],
+      "limitations": [
+        "Confirmed from static original eligibility-table control flow plus browser regression; no paid external runtime is used."
+      ],
+      "first_restored_version": "V187"
+    },
+    {
       "id": "ui.touch-adapter",
       "domain": "input-ui",
       "status": "BROWSER_ADAPTATION",
