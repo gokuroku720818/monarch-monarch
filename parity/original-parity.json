@@ -290,6 +290,51 @@
       "first_restored_version": "V187"
     },
     {
+      "id": "destroy-fence.same-pass-finish",
+      "domain": "construction-destruction",
+      "status": "CONFIRMED",
+      "description": "When Action 10 removes a zero-DF fence core, the dispatcher finishes or continues the work in that same processing pass rather than leaving Action 10 active for one extra pass.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x434da2..0x434e4f",
+          "note": "Action 10 removes the core/cap at zero work/DF and returns 0."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x434e54..0x435030",
+          "note": "Non-final staged damage returns 3; only the removal path takes the non-3 return."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43ba75..0x43bacb",
+          "note": "Dispatcher bypasses completion only for return 3; any other return enters the finish handler immediately."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43bded..0x43be63",
+          "note": "Finish handler resolves continue/wait/normal work state in that same processing pass."
+        }
+      ],
+      "implementation": [
+        "attackDestructible",
+        "finishWorkAction",
+        "actionCode===10&&u.actionTarget"
+      ],
+      "tests": [
+        "tests/test_fence_finish_same_pass.js",
+        "tests/test_fence_finish_same_pass_browser.py"
+      ],
+      "limitations": [
+        "Confirmed from static original return-code flow plus browser regression; no paid external runtime is used."
+      ],
+      "first_restored_version": "V188"
+    },
+    {
       "id": "ui.touch-adapter",
       "domain": "input-ui",
       "status": "BROWSER_ADAPTATION",
