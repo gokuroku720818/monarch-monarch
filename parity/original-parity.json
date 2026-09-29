@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "baseline_version": "V183",
+  "baseline_version": "V189",
   "rules": [
     {
       "id": "action.original-adjacency-height",
@@ -333,6 +333,60 @@
         "Confirmed from static original return-code flow plus browser regression; no paid external runtime is used."
       ],
       "first_restored_version": "V188"
+    },
+    {
+      "id": "route.elevator-vertical-edges",
+      "domain": "movement-pathfinding",
+      "status": "CONFIRMED",
+      "description": "Elevator tiles 120..123 add same-column vertical route neighbours before horizontal directions: 120 uses z+1, 121 uses z-1, and 122/123 use both.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x442606..0x442675",
+          "note": "Tile 120 tests z+1 and records route direction 0xff."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x442677..0x4426f1",
+          "note": "Tile 121 tests z-1 and records route direction 0xfe."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x4426f9..0x4427f6",
+          "note": "Tiles 122/123 (and runtime overlay 124) test both z+1 and z-1."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x4427fb..0x442898",
+          "note": "Horizontal directions 0,2,4,6 are considered after the elevator vertical branch."
+        },
+        {
+          "type": "map",
+          "source": "M_014",
+          "note": "Original stage has an elevator column at x=11,y=27: z8=120, z9..13=123, z14..15=122, z16=121."
+        },
+        {
+          "type": "report",
+          "source": "V189_ORIGINAL_COMPARISON_REPORT.md"
+        }
+      ],
+      "implementation": [
+        "originalVerticalRouteSteps",
+        "route",
+        "routeWithOriginalAiBlocks"
+      ],
+      "tests": [
+        "tests/test_vertical_elevator_route.js",
+        "tests/test_vertical_elevator_route_browser.py"
+      ],
+      "limitations": [
+        "Restores the confirmed route-reconstruction vertical edges; full original distance-map generation and all AI elevator cost priorities remain to be compared."
+      ],
+      "first_restored_version": "V189"
     },
     {
       "id": "ui.touch-adapter",
