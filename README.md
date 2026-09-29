@@ -1,15 +1,25 @@
-# 모나크모나크 — V186 원본 패리티 복원판
+# 모나크모나크 — V187 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V186도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V187도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V186 LITE 웹 기본판.
-- `monarch_v186_lite.html`: 배포본과 바이트 동일한 V186 보관본.
+- `index.html`: V187 LITE 웹 기본판.
+- `monarch_v187_lite.html`: 배포본과 바이트 동일한 V187 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V187: 연속 생산기지 파괴에서 자기 기지 제외
+
+원본 `lm_win.exe 0x43e90f..0x43e96a`의 Action 8 반복작업 wrapper는 tile 29..32를 후보로 만든 뒤, 현재 faction의 자기 생산기지 `29+faction`만 후보 비트에서 제거합니다.
+
+V186는 29..32를 전부 후보로 받아서 연속 파괴가 자기 기지까지 다음 목표로 선택할 수 있었습니다. V187은 원본 흐름대로 **자기 기지는 건너뛰고 적 생산기지만 계속 파괴 대상으로 유지**합니다.
+
+Chromium 실제 엔진에서 탐색 우선 위치에 자기 기지(tile 29), 그 반대편에 적 기지(tile 30)를 배치했을 때 자기 기지를 건너뛰고 적 기지를 Action 8 목표로 선택하는 것을 LITE/FULL 모두 확인했습니다.
+
+V187 보고서: [V187_ORIGINAL_COMPARISON_REPORT.md](V187_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V186: 계속건설 중 자금 부족 대기
 
@@ -44,22 +54,23 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V186 검증 범위
+## V187 검증 범위
 
-GitHub Actions run `36436360034`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36502008881`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
-- V173~V185 focused regressions
-- V186 자금부족 대기 Node/Chromium regression
-- V185→V186 역패치 전체 바이트 동일성
+- V173~V186 focused regressions
+- V187 자기 기지 제외 Node/Chromium regression
+- V186→V187 역패치 전체 바이트 동일성
 - STAGES/SOUND_DATA 및 Base64 23개 동일
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V186 LITE Git blob: `7f26de67871cbd547c853b371e0e041a3fb92b61`.
+테스트된 V187 LITE Git blob: `2e91307fbff652dcd1b2010691c7441e335b35ab`.
 
 ## 이전 수정
 
+- V186: 계속건설 중 자금 부족 시 목표 유지 및 자금 회복 후 재시도.
 - V185: 병력 1인 계속건설 부대의 마지막 생산기지 목표 허용.
 - V184: Action 10의 정확한 울타리 z 타깃 유지.
 - V183: DF100 완성 다리의 무효 수리 명령 차단.
