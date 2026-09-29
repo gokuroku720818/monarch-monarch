@@ -1,15 +1,25 @@
-# 모나크모나크 — V187 원본 패리티 복원판
+# 모나크모나크 — V188 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V187도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V188도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V187 LITE 웹 기본판.
-- `monarch_v187_lite.html`: 배포본과 바이트 동일한 V187 보관본.
+- `index.html`: V188 LITE 웹 기본판.
+- `monarch_v188_lite.html`: 배포본과 바이트 동일한 V188 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V188: 울타리 제거와 Action 10 종료를 같은 패스에서 처리
+
+원본 `lm_win.exe`의 Action 10 worker는 마지막 울타리 코어/캡을 실제로 제거하면 return 0을 내고, dispatcher는 return 3이 아닌 경우 **그 같은 처리 pass에서 바로 완료/계속작업 handler**로 들어갑니다.
+
+V187은 울타리를 제거한 뒤 Action 10이 한 simulation pass 더 남았다가 다음 pass에서 정리됐습니다. V188은 정확한 target 셀이 0이 된 즉시 `finishWorkAction()`을 실행해 원본 return-code 흐름과 맞춥니다.
+
+Chromium LITE/FULL에서 구조물이 실제로 사라진 동일 pass에 actionCode가 10에서 해제되고 target이 null이 되는 것을 확인했고, V187의 자기 기지 제외 회귀도 그대로 통과했습니다.
+
+V188 보고서: [V188_ORIGINAL_COMPARISON_REPORT.md](V188_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V187: 연속 생산기지 파괴에서 자기 기지 제외
 
@@ -54,22 +64,24 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V187 검증 범위
+## V188 검증 범위
 
-GitHub Actions run `36502008881`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36502668907`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
-- V173~V186 focused regressions
-- V187 자기 기지 제외 Node/Chromium regression
-- V186→V187 역패치 전체 바이트 동일성
+- V173~V187 focused regressions
+- V188 same-pass 울타리 종료 Node/Chromium regression
+- V187 자기 기지 제외 Chromium regression
+- V187→V188 역패치 전체 바이트 동일성
 - STAGES/SOUND_DATA 및 Base64 23개 동일
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V187 LITE Git blob: `2e91307fbff652dcd1b2010691c7441e335b35ab`.
+테스트된 V188 LITE Git blob: `dd5e3442c36bf4b7cd14377b8990379dfed534f7`.
 
 ## 이전 수정
 
+- V187: 연속 생산기지 파괴에서 자기 진영 생산기지 제외.
 - V186: 계속건설 중 자금 부족 시 목표 유지 및 자금 회복 후 재시도.
 - V185: 병력 1인 계속건설 부대의 마지막 생산기지 목표 허용.
 - V184: Action 10의 정확한 울타리 z 타깃 유지.
