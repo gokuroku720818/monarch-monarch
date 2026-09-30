@@ -1078,7 +1078,7 @@
       ],
       "implementation": [
         "trackedUnitRoute",
-        "ongoing action 2/3 tracking block"
+        "resetAiAction"
       ],
       "tests": [
         "tests/test_v207_follow_slot_lifetime_browser.py",
