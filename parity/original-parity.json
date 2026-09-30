@@ -718,6 +718,39 @@
         "Confirmed from static native merge bit tests plus deterministic Chromium divergence regression; no frame-by-frame original Windows runtime capture was performed."
       ],
       "first_restored_version": "V197"
+    },
+    {
+      "id": "combat.zero-retaliation-preserved",
+      "domain": "combat",
+      "status": "CONFIRMED",
+      "description": "First-strike computed damage of zero is clamped to 1, but retaliation computed exactly as zero remains zero; only a negative retaliation is raised to 1.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440b77..0x440b84",
+          "note": "First-strike damage uses JG after compare-to-zero, so zero/negative values are replaced with 1."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440c76..0x440c83",
+          "note": "Retaliation damage uses JGE after compare-to-zero, so exact zero is preserved and only negative values are replaced with 1."
+        }
+      ],
+      "implementation": [
+        "exchange",
+        "damage"
+      ],
+      "tests": [
+        "tests/test_v198_zero_counter_browser.py",
+        "tests/test_v192_combat_browser.py",
+        "tests/test_v198_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static executable branch conditions plus deterministic Chromium RED/GREEN; no frame-by-frame original Windows runtime capture was performed."
+      ],
+      "first_restored_version": "V198"
     }
   ]
 }
