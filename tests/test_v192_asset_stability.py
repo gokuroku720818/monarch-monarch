@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import re,sys
 from pathlib import Path
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT/'scripts'))
 import upgrade_v192 as U
 if len(sys.argv)!=3: raise SystemExit('usage: V191 V192')
 oldp,newp=map(Path,sys.argv[1:]); oldb=oldp.read_bytes(); newb=newp.read_bytes()
