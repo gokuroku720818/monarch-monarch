@@ -647,6 +647,45 @@
         "Confirmed from static executable bit test plus deterministic Chromium divergence regression; no frame-by-frame original Windows runtime capture was performed."
       ],
       "first_restored_version": "V195"
+    },
+    {
+      "id": "combat.dying-slot-contact-block",
+      "domain": "combat",
+      "status": "CONFIRMED",
+      "description": "A contacted unit slot that is still occupied during death animation remains collision/contact-blocking and returns code 5 for both enemy and friendly contact until the slot is actually released.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440a77..0x440a93",
+          "note": "Enemy contact reads contacted slot flags +0x124; death bit 0x4 returns 5."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440d19..0x440d37",
+          "note": "Friendly merge path checks contacted slot death bit 0x4 and returns 5."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43fd41..0x43fe50",
+          "note": "Death transition marks the occupied slot as dying before later cleanup releases it."
+        }
+      ],
+      "implementation": [
+        "exchange",
+        "stepCellContact",
+        "unitOccupantAtCell"
+      ],
+      "tests": [
+        "tests/test_v196_dying_contact_browser.py",
+        "tests/test_v196_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from native death-flag contact paths and Chromium occupied-slot regression; no frame-by-frame original Windows runtime capture was performed."
+      ],
+      "first_restored_version": "V196"
     }
   ]
 }
