@@ -2,7 +2,7 @@ name: Verify and stage V200 enemy CPU commander scan
 on:
   push:
     branches:
-      - restore/v200-ai-actionword
+      - restore/v200-enemy-commander-scan
     paths:
       - 'parity/original-parity.json'
       - 'scripts/upgrade_v200.py'
