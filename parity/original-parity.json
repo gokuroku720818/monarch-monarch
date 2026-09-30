@@ -789,6 +789,44 @@
         "Confirmed from static native candidate scan plus deterministic Chromium shadow/native divergence regression; no frame-by-frame original Windows capture was performed."
       ],
       "first_restored_version": "V199"
+    },
+    {
+      "id": "ai.enemy-commander-native-bit",
+      "domain": "cpu-ai",
+      "status": "CONFIRMED",
+      "description": "Enemy CPU target enumeration has no castle-HP commander exclusion and stops its slot scan only when the native action-word 0x0800 commander bit is present.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43dad4..0x43db58",
+          "note": "Reachable occupied candidates are filtered by faction; no castle-HP gate appears in the target scan."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43db5a..0x43db7c",
+          "note": "A reachable different-faction candidate becomes the current target."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43db7c..0x43db8f",
+          "note": "Only candidate WORD +0x10 bit 0x0800 ends the slot scan early."
+        }
+      ],
+      "implementation": [
+        "findEnemyUnitTarget",
+        "unitWord"
+      ],
+      "tests": [
+        "tests/test_v200_enemy_ai_commander_browser.py",
+        "tests/test_v200_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static native target scan plus deterministic Chromium divergence regression; no frame-by-frame original Windows capture was performed."
+      ],
+      "first_restored_version": "V200"
     }
   ]
 }
