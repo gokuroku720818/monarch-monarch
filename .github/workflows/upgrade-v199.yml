@@ -2,11 +2,10 @@ name: Verify and stage V199 friendly AI action-word
 on:
   push:
     branches:
-      - restore/v199-zero-counter
+      - restore/v199-ai-actionword
     paths:
       - 'parity/original-parity.json'
       - 'scripts/upgrade_v199.py'
-      - 'tests/test_v199_zero_counter_browser.py'
       - 'tests/test_v199_friendly_ai_actionword_browser.py'
       - 'tests/test_v199_asset_stability.py'
       - 'tests/test_v192_combat_browser.py'
@@ -31,7 +30,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install playwright
           python -m playwright install --with-deps chromium
-      - name: Generate V199 from exact V197 Git blob
+      - name: Generate V199 from exact V198 Git blob
         run: python3 scripts/upgrade_v199.py
       - name: Verify parity and resources
         run: |
@@ -97,7 +96,7 @@ jobs:
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add index.html monarch_v199_lite.html
-            git commit -m 'Stage V199: preserve native friendly AI action-word'
+            git commit -m 'Stage V199: use native friendly-AI action word'
             git push origin HEAD:${GITHUB_REF_NAME}
           else
             echo 'V199 already staged'
