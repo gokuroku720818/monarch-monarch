@@ -2,23 +2,15 @@
 from pathlib import Path
 import hashlib,sys
 BASE='99bf93612175400b45feaf73d2a7b52292d7b381'
-OLD1="if(!u||!u.alive||u.f!==4||u.type==='king')return false;u.neutralCounter=((u.neutralCounter||0)+1)&0xff;"
-NEW1="if(!u||!u.alive||u.f!==4||u.type==='king')return false;if(u.path||u.target)return true;u.neutralCounter=((u.neutralCounter||0)+1)&0xff;"
-OLD2="""if(u.actionCode===15){
-      if(u.path||u.target)return true;
-      return startOriginalNeutralWanderStep(u,true);
-    }"""
-NEW2="""if(u.actionCode===15){
-      return startOriginalNeutralWanderStep(u,true);
-    }"""
+OLD="if(!u||!u.alive||u.f!==4||u.type==='king')return false;u.neutralCounter=((u.neutralCounter||0)+1)&0xff;"
+NEW="if(!u||!u.alive||u.f!==4||u.type==='king')return false;if(u.path||u.target)return true;u.neutralCounter=((u.neutralCounter||0)+1)&0xff;"
 def blob(data): return hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()
 def upgrade(raw):
     got=blob(raw)
     if got!=BASE: raise ValueError(f'Unknown V203 lite blob expected {BASE} got {got}')
     s=raw.decode('utf8')
-    if s.count(OLD1)!=1: raise ValueError(f'Expected V203 neutral counter prefix once, got {s.count(OLD1)}')
-    if s.count(OLD2)!=1: raise ValueError(f'Expected V203 action15 active-step guard once, got {s.count(OLD2)}')
-    s=s.replace(OLD1,NEW1).replace(OLD2,NEW2)
+    if s.count(OLD)!=1: raise ValueError(f'Expected exact V203 neutral counter prefix once, got {s.count(OLD)}')
+    s=s.replace(OLD,NEW)
     s=s.replace('Original Restoration V203','Original Restoration V204')
     s=s.replace('ORIGINAL RULE RESTORATION · V203','ORIGINAL RULE RESTORATION · V204')
     s=s.replace('モナークモナーク · v203','モナークモナーク · v204')
