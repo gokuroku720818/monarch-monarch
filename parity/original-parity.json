@@ -1050,6 +1050,44 @@
         "Confirmed for friendly CPU candidate enumeration only; ongoing generic action-2/3 follow lifetime remains a separate verification target."
       ],
       "first_restored_version": "V206"
+    },
+    {
+      "id": "follow.stored-slot-lifetime",
+      "domain": "cpu-ai",
+      "status": "CONFIRMED",
+      "description": "Once action 2/3 stores a unit slot, the native ongoing follow routine follows that slot without rechecking browser live/faction/king/castle eligibility; dying occupied targets therefore remain followed until the native route/follow path itself ends.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43e580..0x43e5e6",
+          "note": "Ongoing follow checks target slot range and self-slot only."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43e647..0x43e760",
+          "note": "Stored target slot coordinates are routed without death/faction/commander/castle eligibility checks."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43e767..0x43e7d8",
+          "note": "Successful route reconstruction re-stores the target slot and preserves requested action 2/3."
+        }
+      ],
+      "implementation": [
+        "trackedUnitRoute",
+        "ongoing action 2/3 tracking block"
+      ],
+      "tests": [
+        "tests/test_v207_follow_slot_lifetime_browser.py",
+        "tests/test_v207_asset_stability.py"
+      ],
+      "limitations": [
+        "This restores the browser representation while a living/dying unit object still represents the native slot; behavior after native slot cleanup/reuse remains a separate lifecycle question."
+      ],
+      "first_restored_version": "V207"
     }
   ]
 }
