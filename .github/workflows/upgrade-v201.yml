@@ -2,7 +2,7 @@ name: Verify and stage V201 CPU native commander-bit
 on:
   push:
     branches:
-      - restore/v201-enemy-commander-scan
+      - restore/v201-ai-commander-bit
     paths:
       - 'parity/original-parity.json'
       - 'scripts/upgrade_v201.py'
