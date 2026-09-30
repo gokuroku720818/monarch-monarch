@@ -14,7 +14,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           s=Path('index.html').read_text()
-          for n in ["if((u.actionCode===2||u.actionCode===3)","function trackedUnitRoute","__MONARCH_TEST__={","function tick","function step","function sim"]:
+          for n in ["if((u.actionCode===2||u.actionCode===3)","function trackedUnitRoute","__MONARCH_TEST__={","function tick","function step","function sim","updateOneOriginalPass","originalPassRemainder"]:
               print("\n===== "+n+" =====")
               pos=0;count=0
               while True:
