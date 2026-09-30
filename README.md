@@ -1,15 +1,25 @@
-# 모나크모나크 — V200 원본 패리티 복원판
+# 모나크모나크 — V201 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V200도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V201도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V200 LITE 웹 기본판.
-- `monarch_v200_lite.html`: 배포본과 바이트 동일한 V200 보관본.
+- `index.html`: V201 LITE 웹 기본판.
+- `monarch_v201_lite.html`: 배포본과 바이트 동일한 V201 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V201: CPU 길찾기/합류 장군 판정의 원본 0x0800 단일화
+
+원본 CPU 길찾기 차단표 함수 `0x441296`, `0x44150f`와 아군 합류 후보 스캔 `0x43de21`은 모두 장군 여부를 **packed action word의 0x0800 비트만** 보고 판정합니다.
+
+V200은 공유 block-map helper와 아군 후보 필터에서 `type='king'` 보조 라벨도 장군으로 취급했습니다. V201은 이 fallback을 제거해 CPU 길찾기와 합류 후보 모두 native bit 기준으로 맞췄습니다.
+
+Chromium RED/GREEN에서 `type='king'`이지만 0x0800이 없는 같은 세력 유닛은 V200의 오차단/오제외에서 V201의 정상 합류 후보로 교정됐습니다.
+
+V201 보고서: [V201_ORIGINAL_COMPARISON_REPORT.md](V201_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V200: CPU 적 장군 표적 스캔의 원본 0x0800 판정 복원
 
@@ -182,12 +192,13 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V200 검증 범위
+## V201 검증 범위
 
-GitHub Actions run `36660010544`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36660571426`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
+- V201 CPU native commander-bit block/merge RED/GREEN Chromium regression
 - V200 enemy CPU native commander-scan RED/GREEN Chromium regression
 - V199 friendly CPU native action-word RED/GREEN Chromium regression
 - V198 exact-zero retaliation RED/GREEN Chromium regression
@@ -202,15 +213,16 @@ GitHub Actions run `36660010544`에서 다음 게이트가 모두 통과했습�
 - V190 승강기 경로·플랫폼·실제 탑승 Chromium regression
 - V188 same-pass 울타리 종료 Chromium regression
 - V187 자기 기지 제외 Chromium regression
-- V199→V200 역패치 전체 바이트 동일성
+- V200→V201 역패치 전체 바이트 동일성
 - STAGES/SOUND_DATA 및 Base64 23개 동일
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V200 LITE Git blob: `cafe7c50af3954003072c54a1bb1eb42f7f706a9`.
+테스트된 V201 LITE Git blob: `4444c1f2791070a791e4255677794caaac858f17`.
 
 ## 이전 수정
 
+- V201: CPU 길찾기 차단표와 아군 합류 후보의 장군 판정을 원본 0x0800 비트만 사용하도록 복원.
 - V200: CPU 적 장군 표적 스캔에서 성 HP/type 라벨 보정을 제거하고 원본 0x0800 비트만 사용.
 - V199: CPU 아군 합류 후보의 행동 2/16 판정을 원본 packed action word low byte에서 읽도록 복원.
 - V198: 반격 계산값이 정확히 0일 때 원본처럼 0 피해를 유지.
