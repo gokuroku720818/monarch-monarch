@@ -904,6 +904,43 @@
         "Confirmed from static executable control flow plus deterministic Chromium RED/GREEN; player/manual pursuit and non-neutral CPU chase gates are not changed by this rule."
       ],
       "first_restored_version": "V202"
+    },
+    {
+      "id": "ai.neutral-hunt-occupied-dying-slot",
+      "domain": "neutral-ai",
+      "status": "CONFIRMED",
+      "description": "Neutral faction hunt treats a dying unit slot as target-eligible while the native occupied bit remains set; browser alive=false alone must not suppress that slot before cleanup.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43d44c..0x43d462",
+          "note": "Neutral hunt masks only occupied bit 0x1 from +0x124."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43d468..0x43d4e8",
+          "note": "Candidate path checks acting slot, reachability and faction without reading death bit 0x4."
+        },
+        {
+          "type": "report",
+          "source": "V196_ORIGINAL_COMPARISON_REPORT.md",
+          "note": "Native death lifetime retains slot occupancy until cleanup."
+        }
+      ],
+      "implementation": [
+        "planOriginalNeutralSpecial",
+        "trackedUnitRoute"
+      ],
+      "tests": [
+        "tests/test_v203_neutral_dying_target_browser.py",
+        "tests/test_v203_asset_stability.py"
+      ],
+      "limitations": [
+        "Applies only to faction-4 neutral hunt. Non-neutral pursuit live-target requirements are unchanged pending separate verification."
+      ],
+      "first_restored_version": "V203"
     }
   ]
 }
