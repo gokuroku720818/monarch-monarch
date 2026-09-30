@@ -15,7 +15,7 @@ with sync_playwright() as pw:
   r=page.evaluate('''() => {const T=__MONARCH_TEST__;
     loadStage(0);
     const z=T.getSurface(19,11).z;
-    const a=T.makeTestSoldier(0,19,11,800,z), d=T.makeTestSoldier(1,20,11,10,z);
+    const a=T.makeTestSoldier(0,19,11,800,z), d=T.makeTestSoldier(1,20,11,8,z+1);
     const r1=T.exchange(a,d);
     const killDef={ret:r1,aStrength:a.strength,aAlive:a.alive,dStrength:d.strength,dAlive:d.alive,dDying:!!d.dying,dFlags:d.originalFrameFlags||0};
     loadStage(0);
