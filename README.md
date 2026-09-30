@@ -1,15 +1,25 @@
-# 모나크모나크 — V193 원본 패리티 복원판
+# 모나크모나크 — V194 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V193도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V194도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V193 LITE 웹 기본판.
-- `monarch_v193_lite.html`: 배포본과 바이트 동일한 V193 보관본.
+- `index.html`: V194 LITE 웹 기본판.
+- `monarch_v194_lite.html`: 배포본과 바이트 동일한 V194 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V194: 전투 사망 효과음의 타격자 세력 선택 복원
+
+원본 `lm_win.exe 0x436217..0x436233`은 세력 효과음 인덱스 테이블을 0,1,2,3,4로 초기화하고, 전투 사망 시 죽은 유닛이 아니라 **치명타를 가한 쪽의 세력**으로 LM0030~LM0034를 선택합니다.
+
+V193은 피해자 세력을 사용했습니다. V194는 첫 타격으로 방어자가 죽으면 공격자 세력, 반격으로 공격자가 죽으면 반격자 세력을 사용하도록 원본 흐름에 맞췄습니다.
+
+Chromium에서 세력 0이 세력 1을 쓰러뜨릴 때 V193의 LM0031 → V194의 LM0030, 세력 1의 반격으로 세력 0이 죽을 때 LM0030 → LM0031로 교정되는 것을 실제 내장 WAV payload로 LITE/FULL 모두 확인했습니다.
+
+V194 보고서: [V194_ORIGINAL_COMPARISON_REPORT.md](V194_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V193: 전투 금지 상태의 원본 action word 판독 복원
 
@@ -112,12 +122,13 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V193 검증 범위
+## V194 검증 범위
 
-GitHub Actions run `36654140042`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36654799519`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
+- V194 killer-faction combat death-SFX RED/GREEN Chromium regression
 - V193 native action-word combat gate RED/GREEN Chromium regression
 - V192 lethal-hit retaliation/return-code RED/GREEN Chromium regression
 - V191 strict bounded reach RED/GREEN Chromium regression
@@ -125,15 +136,16 @@ GitHub Actions run `36654140042`에서 다음 게이트가 모두 통과했습�
 - V190 승강기 경로·플랫폼·실제 탑승 Chromium regression
 - V188 same-pass 울타리 종료 Chromium regression
 - V187 자기 기지 제외 Chromium regression
-- V192→V193 역패치 전체 바이트 동일성
+- V193→V194 역패치 전체 바이트 동일성
 - STAGES/SOUND_DATA 및 Base64 23개 동일
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V193 LITE Git blob: `ec7dc0a2cef14fa575ccfc4207cbd2431c372387`.
+테스트된 V194 LITE Git blob: `3484b9bc2f562864f4b9efde6f452b5a479d2b0d`.
 
 ## 이전 수정
 
+- V194: 전투 사망 효과음을 원본처럼 치명타를 가한 세력에서 선택.
 - V193: 전투 금지 상태 0x11을 원본처럼 action word low byte에서 판독.
 - V192: 치명타 방어자의 같은 교환 반격 유지 및 반격으로 공격자 사망 시 return 6 복원.
 - V191: bounded reach-map의 반경을 원본처럼 배타적 상한으로 처리.
