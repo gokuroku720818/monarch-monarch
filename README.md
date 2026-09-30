@@ -1,15 +1,25 @@
-# 모나크모나크 — V205 원본 패리티 복원판
+# 모나크모나크 — V206 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V205도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V206도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V205 LITE 웹 기본판.
-- `monarch_v205_lite.html`: 배포본과 바이트 동일한 V205 보관본.
+- `index.html`: V206 LITE 웹 기본판.
+- `monarch_v206_lite.html`: 배포본과 바이트 동일한 V206 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V206: friendly CPU merge의 dying occupied 슬롯 복원
+
+원본 `lm_win.exe 0x43dd79..0x43df8d`는 friendly CPU merge 후보도 `+0x124 & 0x1` occupied bit 기준으로 스캔하며 death bit를 별도로 제외하지 않습니다.
+
+V205는 `findFriendlyMergeTarget()`에서 `v.alive`만 허용했지만, V206는 원본 슬롯 수명에 맞춰 `alive || dying` 후보를 유지합니다.
+
+Chromium RED/GREEN에서 V205는 dying friendly target을 선택하지 못했고, V206는 action 2로 전환하며 정확한 슬롯을 저장했습니다.
+
+V206 보고서: [V206_ORIGINAL_COMPARISON_REPORT.md](V206_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V205: CPU enemy scan의 dying occupied 슬롯 복원
 
@@ -228,9 +238,9 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V205 검증 범위
+## V206 검증 범위
 
-GitHub Actions run `36675582378`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36676365593`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
@@ -254,10 +264,11 @@ GitHub Actions run `36675582378`에서 다음 게이트가 모두 통과했습�
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V205 LITE Git blob: `c9ac6ee11b641e536b845c6843ab3e3d1faf57c1`.
+테스트된 V206 LITE Git blob: `227b44d081e59b667e42efc6dfe024e9e6a3b997`.
 
 ## 이전 수정
 
+- V206: friendly CPU merge scan이 사망 애니메이션 중인 occupied 슬롯을 원본처럼 후보로 유지.
 - V205: CPU enemy scan이 사망 애니메이션 중인 occupied 슬롯을 원본처럼 타깃 후보로 유지.
 - V204: 중립 이동 step 진행 중 hunt/wander counter가 증가하지 않도록 원본 타이밍 복원.
 - V203: 중립 AI가 사망 애니메이션 중이지만 아직 점유된 슬롯을 원본처럼 타깃 후보로 유지.
