@@ -827,6 +827,45 @@
         "Confirmed from static native target scan plus deterministic Chromium divergence regression; no frame-by-frame original Windows capture was performed."
       ],
       "first_restored_version": "V200"
+    },
+    {
+      "id": "ai.commander-native-bit-only",
+      "domain": "cpu-ai",
+      "status": "CONFIRMED",
+      "description": "CPU AI block-map and friendly-merge commander classification uses only native packed action-word bit 0x0800, not the browser unit type label.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x44135d..0x44136e; 0x4413ea..0x4413fa",
+          "note": "General AI block map checks commander status only through WORD +0x10 bit 0x0800."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x4415d6..0x4415e7; 0x441663..0x441673",
+          "note": "Friendly block map uses the same native 0x0800 test."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43de21..0x43de33",
+          "note": "Friendly merge candidate commander exclusion uses only +0x10 bit 0x0800."
+        }
+      ],
+      "implementation": [
+        "buildOriginalAiBlockSet",
+        "findFriendlyMergeTarget",
+        "unitWord"
+      ],
+      "tests": [
+        "tests/test_v201_ai_commander_block_browser.py",
+        "tests/test_v201_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static native block/target scans plus deterministic Chromium shadow/native divergence regression; no frame-by-frame original Windows capture was performed."
+      ],
+      "first_restored_version": "V201"
     }
   ]
 }
