@@ -1,15 +1,23 @@
-# 모나크모나크 — V201 원본 패리티 복원판
+# 모나크모나크 — V202 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V201도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V202도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V201 LITE 웹 기본판.
-- `monarch_v201_lite.html`: 배포본과 바이트 동일한 V201 보관본.
+- `index.html`: V202 LITE 웹 기본판.
+- `monarch_v202_lite.html`: 배포본과 바이트 동일한 V202 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V202: 중립 AI 사냥의 성 HP 장군 억제 제거
+
+원본 `lm_win.exe 0x43d3db..0x43d5f3`의 중립 세력 사냥 스캔은 **점유된 슬롯인지, 도달 가능한지, 다른 세력인지**만 확인하며 대상이 장군인지·그 세력의 성 HP가 남아 있는지를 보지 않습니다.
+
+V201은 `type='king' && castleHP>0`이면 중립 AI가 해당 대상을 건너뛰고, 추적 경로 helper에서도 같은 조건으로 막았습니다. V202는 **faction 4 중립 AI에 한해 이 비원본 억제를 제거**했습니다. Chromium RED/GREEN에서 성 HP 400이 남은 원본 장군 비트(0x0800) 대상도 V202에서는 정확히 action 3 대상으로 선택됩니다.
+
+V202 보고서: [V202_ORIGINAL_COMPARISON_REPORT.md](V202_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V201: CPU 길찾기/합류 장군 판정의 원본 0x0800 단일화
 
@@ -192,9 +200,9 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V201 검증 범위
+## V202 검증 범위
 
-GitHub Actions run `36660571426`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36671506737`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
@@ -218,10 +226,11 @@ GitHub Actions run `36660571426`에서 다음 게이트가 모두 통과했습�
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V201 LITE Git blob: `4444c1f2791070a791e4255677794caaac858f17`.
+테스트된 V202 LITE Git blob: `8d678a731679a8be1043ee1aabf6a889cf0b0974`.
 
 ## 이전 수정
 
+- V202: 중립 AI 사냥에서 성 HP/브라우저 king 라벨 기반 비원본 억제 제거.
 - V201: CPU 길찾기 차단표와 아군 합류 후보의 장군 판정을 원본 0x0800 비트만 사용하도록 복원.
 - V200: CPU 적 장군 표적 스캔에서 성 HP/type 라벨 보정을 제거하고 원본 0x0800 비트만 사용.
 - V199: CPU 아군 합류 후보의 행동 2/16 판정을 원본 packed action word low byte에서 읽도록 복원.
