@@ -395,6 +395,67 @@
         "V189 restores the cardinal tie/backtrack rule for the HTML walk graph. Native special vertical/elevator path bytes handled separately around 0x4425fd..0x4427f6 are not newly claimed by this rule."
       ],
       "first_restored_version": "V189"
+    },
+    {
+      "id": "movement.elevator-vertical-route",
+      "domain": "movement-pathfinding",
+      "status": "CONFIRMED",
+      "description": "Original moving lift tile 124 preserves a hidden 120/121/122/123 under-tile; source-side distance flood enters vertical up/down states at lift endpoints, target-side reconstruction emits vertical path bytes, and the moving platform carries a rider while reversing at endpoints with the native pause.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x4071ca..0x407363",
+          "note": "Initial tile 120 allocates one of four lift records, preserves the hidden under-tile, and exposes moving platform tile 124."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x441e80..0x44215b",
+          "note": "Neighbor resolution reads the hidden under-tile for visible 124 and applies special 120/121 height semantics."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43ef84..0x43f5c9",
+          "note": "Source-side distance field has vertical up/down queue states entered from effective lift endpoints."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x4424e0..0x4428fc",
+          "note": "Target-side reconstruction resolves 124 through the hidden tile and stores 0xFE/0xFF vertical path bytes."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43b116..0x43b7c6",
+          "note": "Four lift records move one z level per pass, transfer hidden under-tiles, reverse at 120/121, pause 0x1e passes, and carry riders."
+        },
+        {
+          "type": "map",
+          "source": "M_014",
+          "note": "Original map provides the real z=8..16 lift shaft used by the RED/GREEN Chromium regression."
+        }
+      ],
+      "implementation": [
+        "prepareInitialElevators",
+        "effectiveElevatorTileAt",
+        "route",
+        "routeWithOriginalAiBlocks",
+        "buildOriginalReachMap",
+        "originalCardinalBacktrack",
+        "tickOriginalElevators"
+      ],
+      "tests": [
+        "tests/test_elevator_red_green_browser.py",
+        "tests/test_elevator_stage_invariants.py",
+        "tests/test_route_tie_backtrack_browser.py"
+      ],
+      "limitations": [
+        "Confirmed from static executable control flow plus deterministic Chromium regressions on original maps; no frame-by-frame capture of the original Windows process was performed."
+      ],
+      "first_restored_version": "V190"
     }
   ]
 }
