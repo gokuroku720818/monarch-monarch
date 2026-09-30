@@ -1,0 +1,104 @@
+name: Verify and stage V199 friendly AI action-word
+on:
+  push:
+    branches:
+      - restore/v199-zero-counter
+    paths:
+      - 'parity/original-parity.json'
+      - 'scripts/upgrade_v199.py'
+      - 'tests/test_v199_zero_counter_browser.py'
+      - 'tests/test_v199_friendly_ai_actionword_browser.py'
+      - 'tests/test_v199_asset_stability.py'
+      - 'tests/test_v192_combat_browser.py'
+      - 'V199_ORIGINAL_COMPARISON_REPORT.md'
+      - '.github/workflows/upgrade-v199.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify-v199:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Chromium
+        run: |
+          python -m pip install --upgrade pip
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Generate V199 from exact V197 Git blob
+        run: python3 scripts/upgrade_v199.py
+      - name: Verify parity and resources
+        run: |
+          python3 tests/test_parity_manifest.py
+          python3 tools/audit_parity.py index.html
+          python3 tests/test_original_parity.py index.html
+          python3 tests/test_original_parity.py monarch_v199_lite.html
+      - name: Verify V199 AI and retained combat/contact regressions
+        run: |
+          python3 tests/test_v199_friendly_ai_actionword_browser.py monarch_v198_lite.html monarch_v199_lite.html
+          python3 tests/test_v198_zero_counter_browser.py monarch_v197_lite.html monarch_v199_lite.html
+          python3 tests/test_v197_merge_commander_bit_browser.py monarch_v196_lite.html monarch_v199_lite.html
+          python3 tests/test_v196_dying_contact_browser.py monarch_v195_lite.html monarch_v199_lite.html
+          python3 tests/test_v195_commander_bit_browser.py monarch_v194_lite.html monarch_v199_lite.html
+          python3 tests/test_v194_combat_sfx_browser.py monarch_v193_lite.html monarch_v199_lite.html
+          python3 tests/test_v193_actionword_combat_browser.py monarch_v192_lite.html monarch_v199_lite.html
+          python3 tests/test_v192_combat_browser.py monarch_v191_lite.html monarch_v199_lite.html
+      - name: Verify retained movement and work regressions
+        run: |
+          python3 tests/test_v191_radius_browser.py monarch_v190_lite.html monarch_v191_lite.html
+          python3 tests/test_route_tie_backtrack_browser.py monarch_v199_lite.html
+          python3 tests/test_elevator_runtime_browser.py monarch_v199_lite.html
+          python3 tests/test_fence_finish_same_pass_browser.py monarch_v199_lite.html
+          python3 tests/test_destroybase_continue_browser.py monarch_v199_lite.html
+          node tests/test_fence_finish_same_pass.js index.html
+          node tests/test_destroybase_continue_excludes_own.js index.html
+          node tests/test_base_continue_funding_wait.js index.html
+          node tests/test_base_continue_last_strength.js index.html
+          node tests/test_fence_exact_target_height.js index.html
+          node tests/test_bridge_command_validity.js index.html
+          node tests/test_fence_command_validity.js index.html
+          node tests/test_work_height.js index.html
+          node tests/test_command_pause.js index.html
+          node tests/test_fence_order_height.js index.html
+          node tests/test_bridge_deck_height.js index.html
+          node tests/test_king_defeat_cleanup.js index.html
+          node tests/test_recycled_slot_cleanup.js index.html
+          node tests/test_touch_focus_adapter.js index.html
+      - name: Verify 75-stage invariants
+        run: |
+          python3 tests/test_stage_invariants.py monarch_v199_lite.html
+          python3 tests/test_elevator_stage_invariants.py monarch_v199_lite.html
+      - name: Verify exact V198 to V199 asset stability
+        run: python3 tests/test_v199_asset_stability.py monarch_v198_lite.html monarch_v199_lite.html
+      - name: Verify JavaScript, archive identity, and target blob
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,re,subprocess,tempfile
+          a=Path('index.html').read_bytes(); b=Path('monarch_v199_lite.html').read_bytes()
+          assert a==b and b'Original Restoration V199 LITE' in a
+          git=hashlib.sha1(b'blob '+str(len(a)).encode()+b'\0'+a).hexdigest()
+          assert git=='526d86609ab59aa7bedec39b0f079e5d6057b544',git
+          blocks=[m.group(1) for m in re.finditer(r'<script\b[^>]*>(.*?)</script\s*>',a.decode('utf8'),re.I|re.S) if m.group(1).strip()]
+          with tempfile.TemporaryDirectory() as td:
+              for i,js in enumerate(blocks):
+                  f=Path(td)/f'script_{i}.js'; f.write_text(js); subprocess.run(['node','--check',str(f)],check=True)
+          print('PASS V199 archive identity; JS blocks',len(blocks),'Git blob',git,'SHA256',hashlib.sha256(a).hexdigest())
+          PY
+      - name: Commit tested V199 to parity branch
+        run: |
+          if ! git diff --quiet -- index.html || [ -n "$(git ls-files --others --exclude-standard monarch_v199_lite.html)" ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add index.html monarch_v199_lite.html
+            git commit -m 'Stage V199: preserve native friendly AI action-word'
+            git push origin HEAD:${GITHUB_REF_NAME}
+          else
+            echo 'V199 already staged'
+          fi
