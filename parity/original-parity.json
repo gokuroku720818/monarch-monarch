@@ -501,6 +501,44 @@
         "Confirmed from static executable control flow plus deterministic Chromium regression; no frame-by-frame original Windows runtime capture was performed."
       ],
       "first_restored_version": "V191"
+    },
+    {
+      "id": "combat.lethal-hit-retaliation-return",
+      "domain": "combat",
+      "status": "CONFIRMED",
+      "description": "Unit exchange precomputes retaliation before the first strike. A defender reduced to zero still reaches the retaliation gate unless an existing block/freeze condition applies; if retaliation reduces the attacker to zero, the exchange returns 6, otherwise 4.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x4409e5..0x440c01",
+          "note": "Native exchange computes both damage amounts before applying the first strike; defender death handling continues into the retaliation gate instead of returning."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440cc1..0x440d00",
+          "note": "After retaliation, attacker zero-strength death handling returns 6; surviving attacker path returns 4."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43fd41..0x43fe50",
+          "note": "Native death transition sets death bit 0x4 but does not set retaliation-block bit 0x20, so lethal first strike alone does not cancel the already-computed counterattack."
+        }
+      ],
+      "implementation": [
+        "exchange",
+        "beginDeathVisual"
+      ],
+      "tests": [
+        "tests/test_v192_combat_browser.py",
+        "tests/test_v192_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static executable exchange/death control flow plus deterministic Chromium regression; no frame-by-frame original Windows runtime capture was performed."
+      ],
+      "first_restored_version": "V192"
     }
   ]
 }
