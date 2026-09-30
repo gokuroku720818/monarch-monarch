@@ -686,6 +686,38 @@
         "Confirmed from native death-flag contact paths and Chromium occupied-slot regression; no frame-by-frame original Windows runtime capture was performed."
       ],
       "first_restored_version": "V196"
+    },
+    {
+      "id": "merge.native-commander-bit-gate",
+      "domain": "unit-contact-merge",
+      "status": "CONFIRMED",
+      "description": "Friendly merge commander exclusion is keyed only by native action-word bit 0x0800 on either unit, not by a browser unit type label.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440d5c..0x440d76",
+          "note": "Active unit WORD +0x10 is masked with 0x0800; set bit returns 1."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440d7b..0x440d93",
+          "note": "Contacted unit WORD +0x10 is masked with 0x0800; set bit returns 1."
+        }
+      ],
+      "implementation": [
+        "mergeFriendlyPair",
+        "unitWord"
+      ],
+      "tests": [
+        "tests/test_v197_merge_commander_bit_browser.py",
+        "tests/test_v197_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static native merge bit tests plus deterministic Chromium divergence regression; no frame-by-frame original Windows runtime capture was performed."
+      ],
+      "first_restored_version": "V197"
     }
   ]
 }
