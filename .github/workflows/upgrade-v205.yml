@@ -1,12 +1,12 @@
-name: Verify and stage V205 neutral active-step counter parity
+name: Verify and stage V205 enemy CPU dying-target parity
 on:
   push:
     branches:
-      - restore/v205-neutral-native-flags
+      - restore/v205-cpu-dying-target
     paths:
       - 'parity/original-parity.json'
       - 'scripts/upgrade_v205.py'
-      - 'tests/test_v205_neutral_counter_browser.py'
+      - 'tests/test_v205_enemy_dying_target_browser.py'
       - 'tests/test_v205_asset_stability.py'
       - 'V205_ORIGINAL_COMPARISON_REPORT.md'
       - '.github/workflows/upgrade-v205.yml'
@@ -37,9 +37,10 @@ jobs:
           python3 tools/audit_parity.py index.html
           python3 tests/test_original_parity.py index.html
           python3 tests/test_original_parity.py monarch_v205_lite.html
-      - name: Verify V205 neutral AI and retained AI/combat regressions
+      - name: Verify V205 CPU AI and retained AI/combat regressions
         run: |
-          python3 tests/test_v205_neutral_counter_browser.py monarch_v204_lite.html monarch_v205_lite.html
+          python3 tests/test_v205_enemy_dying_target_browser.py monarch_v204_lite.html monarch_v205_lite.html
+          python3 tests/test_v204_neutral_counter_browser.py monarch_v203_lite.html monarch_v205_lite.html
           python3 tests/test_v203_neutral_dying_target_browser.py monarch_v202_lite.html monarch_v205_lite.html
           python3 tests/test_v202_neutral_hunt_browser.py monarch_v201_lite.html monarch_v205_lite.html
           python3 tests/test_v201_ai_commander_block_browser.py monarch_v200_lite.html monarch_v205_lite.html
