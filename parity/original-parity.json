@@ -456,6 +456,51 @@
         "Confirmed from static executable control flow plus deterministic Chromium regressions on original maps; no frame-by-frame capture of the original Windows process was performed."
       ],
       "first_restored_version": "V190"
+    },
+    {
+      "id": "movement.ai-reach-radius-exclusive",
+      "domain": "movement-pathfinding",
+      "status": "CONFIRMED",
+      "description": "The original bounded distance flood compares candidate newDistance to the search argument before insertion and rejects newDistance >= radius; native arguments 3, 10 and 255 therefore store at most distances 2, 9 and 254.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43f1f1..0x43f202",
+          "note": "Upward vertical expansion computes current+1 and JAE-skips when the new distance is >= the radius argument."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43f329..0x43f33a",
+          "note": "Downward vertical expansion uses the same strict candidate-distance cutoff."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43f483..0x43f494",
+          "note": "Cardinal expansion uses the same strict candidate-distance cutoff."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43d5f4..0x43d6aa; 0x43da53; 0x43da7d",
+          "note": "AI scan phases provide search arguments 3, 10 and 255 to the native reach-map routine."
+        }
+      ],
+      "implementation": [
+        "buildOriginalReachMap",
+        "aiSearchRadius"
+      ],
+      "tests": [
+        "tests/test_v191_radius_browser.py",
+        "tests/test_elevator_runtime_browser.py",
+        "tests/test_elevator_stage_invariants.py"
+      ],
+      "limitations": [
+        "Confirmed from static executable control flow plus deterministic Chromium regression; no frame-by-frame original Windows runtime capture was performed."
+      ],
+      "first_restored_version": "V191"
     }
   ]
 }
