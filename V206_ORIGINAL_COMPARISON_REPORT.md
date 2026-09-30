@@ -26,4 +26,4 @@ Only friendly CPU merge candidate enumeration switches from browser live-only st
 ## Tested candidate blob
 - V206 LITE Git blob: `227b44d081e59b667e42efc6dfe024e9e6a3b997`
 
-No paid external server or DigitalOcean resource was used.
+Probe Actions run `36676055284` reproduced the V205 RED and V206 GREEN in Chromium.\n\nNo paid external server or DigitalOcean resource was used.
