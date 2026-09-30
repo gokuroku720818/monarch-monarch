@@ -16,7 +16,7 @@ with sync_playwright() as pw:
           const one=(sameFaction)=>{loadStage(0);const z=T.getSurface(19,11).z;
             const a=T.makeTestSoldier(0,19,11,100,z), d=T.makeTestSoldier(sameFaction?0:1,20,11,0,z);
             d.alive=false; d.dying=true; d.originalFrameFlags=(d.originalFrameFlags||0)|0x4;
-            const contact=T.stepCellContact(a,20,11,z);
+            const contact=T.stepCellContact(a,{x:20,y:11,z});
             const ret=T.exchange(a,contact);
             return {found:contact===d,ret,aStrength:a.strength,dFlags:d.originalFrameFlags||0,dDying:!!d.dying};};
           return {enemy:one(false),friendly:one(true),err:__MONARCH_ERRORS__||[]};}''')
