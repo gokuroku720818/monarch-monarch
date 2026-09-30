@@ -1,15 +1,25 @@
-# 모나크모나크 — V191 원본 패리티 복원판
+# 모나크모나크 — V192 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V191도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V192도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V191 LITE 웹 기본판.
-- `monarch_v191_lite.html`: 배포본과 바이트 동일한 V191 보관본.
+- `index.html`: V192 LITE 웹 기본판.
+- `monarch_v192_lite.html`: 배포본과 바이트 동일한 V192 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V192: 치명타 이후 원본 반격·교환 종료 순서 복원
+
+원본 `lm_win.exe 0x4409e5..0x440d0f`는 첫 타격과 반격 피해량을 미리 계산합니다. 그래서 첫 타격으로 방어 병력이 0이 되더라도 사망 처리 후 즉시 전투를 끝내지 않고, 기존 반격 금지/동결 조건이 없다면 **그 교환의 이미 계산된 반격을 수행**합니다.
+
+V191은 방어자가 0이 되는 즉시 return 6으로 빠져 이 반격을 없앴고, 반대로 반격으로 공격자가 0이 되었을 때는 return 4를 냈습니다. V192는 원본 흐름대로 방어자 사망 뒤 반격 판정을 계속하고, 반격으로 공격자가 사망하면 return 6을 반환합니다.
+
+Chromium RED/GREEN에서 800 대 10은 V191의 공격자 800 유지/return 6에서 V192의 공격자 799/return 4로, 10 대 800은 공격자 사망 시 return 4에서 return 6으로 교정됐습니다. LITE/FULL 모두 동일하게 검증했습니다.
+
+V192 보고서: [V192_ORIGINAL_COMPARISON_REPORT.md](V192_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V191: 원본 bounded reach 반경의 엄격한 상한 복원
 
@@ -92,26 +102,28 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V191 검증 범위
+## V192 검증 범위
 
-GitHub Actions run `36651258592`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36653627000`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
+- V192 lethal-hit retaliation/return-code RED/GREEN Chromium regression
 - V191 strict bounded reach RED/GREEN Chromium regression
 - V189 목표측 route tie backtrack Node/Chromium regression
 - V190 승강기 경로·플랫폼·실제 탑승 Chromium regression
 - V188 same-pass 울타리 종료 Chromium regression
 - V187 자기 기지 제외 Chromium regression
-- V190→V191 역패치 전체 바이트 동일성
+- V191→V192 역패치 전체 바이트 동일성
 - STAGES/SOUND_DATA 및 Base64 23개 동일
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V191 LITE Git blob: `8388cb9d5578c9f039d2050264ba3e00033c2f35`.
+테스트된 V192 LITE Git blob: `55bba7d749d0d88fa29e6cfb091dc3357393e8e7`.
 
 ## 이전 수정
 
+- V192: 치명타 방어자의 같은 교환 반격 유지 및 반격으로 공격자 사망 시 return 6 복원.
 - V191: bounded reach-map의 반경을 원본처럼 배타적 상한으로 처리.
 - V190: 승강기 수직 길찾기·이동 플랫폼·탑승 복원.
 - V188: 울타리 제거와 Action 10 종료를 같은 simulation pass에서 처리.
