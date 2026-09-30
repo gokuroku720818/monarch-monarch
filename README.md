@@ -1,15 +1,25 @@
-# 모나크모나크 — V198 원본 패리티 복원판
+# 모나크모나크 — V199 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V198도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V199도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V198 LITE 웹 기본판.
-- `monarch_v198_lite.html`: 배포본과 바이트 동일한 V198 보관본.
+- `index.html`: V199 LITE 웹 기본판.
+- `monarch_v199_lite.html`: 배포본과 바이트 동일한 V199 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V199: CPU 아군 합류 대상의 원본 action word 판독 복원
+
+원본 `lm_win.exe 0x43de38..0x43de6b`은 아군 합류 후보의 행동 2/16을 브라우저 보조값이 아니라 유닛 구조체 `+0x10`의 **packed action word low byte**에서 읽습니다. 행동 2인 후보는 제외하고, 행동 16인 후보는 슬롯 스캔 중 즉시 우선 선택합니다.
+
+V198은 별도 `actionCode`를 사용해 두 값이 어긋나는 경계에서 잘못된 대상을 고를 수 있었습니다. V199은 두 판정을 모두 `unitWord & 0xff`로 복원했습니다.
+
+Chromium RED/GREEN에서 native word가 2이지만 `actionCode=1`인 후보는 V198의 오선택에서 V199의 정상 제외로, native word가 16이지만 `actionCode=1`인 집결 후보는 V198의 우선권 누락에서 V199의 즉시 우선 선택으로 교정됐습니다.
+
+V199 보고서: [V199_ORIGINAL_COMPARISON_REPORT.md](V199_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V198: 반격 계산값 0의 원본 피해 처리 복원
 
@@ -162,12 +172,13 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V198 검증 범위
+## V199 검증 범위
 
-GitHub Actions run `36658724127`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36659533598`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
+- V199 friendly CPU native action-word RED/GREEN Chromium regression
 - V198 exact-zero retaliation RED/GREEN Chromium regression
 - V197 native merge commander-bit RED/GREEN Chromium regression
 - V196 dying occupied-slot contact RED/GREEN Chromium regression
@@ -180,15 +191,16 @@ GitHub Actions run `36658724127`에서 다음 게이트가 모두 통과했습�
 - V190 승강기 경로·플랫폼·실제 탑승 Chromium regression
 - V188 same-pass 울타리 종료 Chromium regression
 - V187 자기 기지 제외 Chromium regression
-- V197→V198 역패치 전체 바이트 동일성
+- V198→V199 역패치 전체 바이트 동일성
 - STAGES/SOUND_DATA 및 Base64 23개 동일
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V198 LITE Git blob: `fbd7d8b810184d15a067c9538293b168edc84a3e`.
+테스트된 V199 LITE Git blob: `526d86609ab59aa7bedec39b0f079e5d6057b544`.
 
 ## 이전 수정
 
+- V199: CPU 아군 합류 후보의 행동 2/16 판정을 원본 packed action word low byte에서 읽도록 복원.
 - V198: 반격 계산값이 정확히 0일 때 원본처럼 0 피해를 유지.
 - V197: 아군 병합의 장군 판정을 원본 action word 0x0800 비트만 사용하도록 복원.
 - V196: 사망 애니메이션 중 점유 슬롯을 원본처럼 접촉 차단 상태로 유지.
