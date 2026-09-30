@@ -615,6 +615,38 @@
         "Confirmed from static executable faction-table/sound call flow plus Chromium WAV-payload interception; no frame-by-frame original Windows runtime capture was performed."
       ],
       "first_restored_version": "V194"
+    },
+    {
+      "id": "combat.native-commander-bit-damage",
+      "domain": "combat",
+      "status": "CONFIRMED",
+      "description": "The fixed first-strike damage 100 against a commander is keyed only by native action-word bit 0x0800, not by a browser unit type label.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440b55..0x440b65",
+          "note": "Reads contacted unit WORD +0x10 and masks exactly 0x0800."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440b67..0x440b70",
+          "note": "When the active attacking faction is not neutral faction 4, sets first-strike damage to 100."
+        }
+      ],
+      "implementation": [
+        "exchange",
+        "unitWord"
+      ],
+      "tests": [
+        "tests/test_v195_commander_bit_browser.py",
+        "tests/test_v195_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static executable bit test plus deterministic Chromium divergence regression; no frame-by-frame original Windows runtime capture was performed."
+      ],
+      "first_restored_version": "V195"
     }
   ]
 }
