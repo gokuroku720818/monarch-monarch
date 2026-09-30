@@ -941,6 +941,43 @@
         "Applies only to faction-4 neutral hunt. Non-neutral pursuit live-target requirements are unchanged pending separate verification."
       ],
       "first_restored_version": "V203"
+    },
+    {
+      "id": "neutral.active-step-counter",
+      "domain": "neutral-ai",
+      "status": "CONFIRMED",
+      "description": "Faction-4 neutral special processing advances its hunt/wander counter only when the native movement-step field is idle; an active movement step continues movement without incrementing the counter.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43d09a..0x43d0a6",
+          "note": "Reads unit +0x11c and jumps to the active movement branch when the value is >=0."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43d0ac..0x43d0bd",
+          "note": "The neutral +0x0A counter increment exists only on the idle/no-step branch."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43d204..0x43d209",
+          "note": "Active movement calls 0x43c4fc and returns without the counter increment."
+        }
+      ],
+      "implementation": [
+        "planOriginalNeutralSpecial"
+      ],
+      "tests": [
+        "tests/test_v204_neutral_counter_browser.py",
+        "tests/test_v204_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static executable control flow plus deterministic Chromium RED/GREEN; no frame-by-frame original Windows runtime capture was performed."
+      ],
+      "first_restored_version": "V204"
     }
   ]
 }
