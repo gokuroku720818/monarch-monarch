@@ -1014,6 +1014,42 @@
         "Confirmed for enemy CPU target enumeration only; friendly merge and generic follow lifetime remain separate verification targets."
       ],
       "first_restored_version": "V205"
+    },
+    {
+      "id": "ai.friendly-occupied-dying-merge",
+      "domain": "cpu-ai",
+      "status": "CONFIRMED",
+      "description": "Friendly CPU merge-target enumeration treats a dying unit slot as eligible while the native occupied bit remains set; browser alive=false alone must not suppress it before cleanup.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43dd79..0x43dd8c",
+          "note": "Candidate +0x124 is filtered only by occupied bit 0x1."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43dd92..0x43dee0",
+          "note": "Self/reach/same-faction/commander/action/special/idle/strength filters follow without any death-bit 0x4 test."
+        },
+        {
+          "type": "report",
+          "source": "V196_ORIGINAL_COMPARISON_REPORT.md",
+          "note": "Native dying-slot lifetime retains occupancy until cleanup."
+        }
+      ],
+      "implementation": [
+        "findFriendlyMergeTarget"
+      ],
+      "tests": [
+        "tests/test_v206_friendly_dying_merge_browser.py",
+        "tests/test_v206_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed for friendly CPU candidate enumeration only; ongoing generic action-2/3 follow lifetime remains a separate verification target."
+      ],
+      "first_restored_version": "V206"
     }
   ]
 }
