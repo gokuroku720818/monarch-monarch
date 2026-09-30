@@ -751,6 +751,44 @@
         "Confirmed from static executable branch conditions plus deterministic Chromium RED/GREEN; no frame-by-frame original Windows runtime capture was performed."
       ],
       "first_restored_version": "V198"
+    },
+    {
+      "id": "ai.friendly-merge-native-action-word",
+      "domain": "cpu-ai",
+      "status": "CONFIRMED",
+      "description": "The friendly CPU merge-target scan reads action 2/16 from the low byte of the native packed action word (+0x10), not the browser actionCode shadow field.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43de38..0x43de4c",
+          "note": "Candidate WORD +0x10 is masked with 0xff and action 2 is skipped."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43de51..0x43de6b",
+          "note": "Candidate WORD +0x10 is masked with 0xff and action 16 is immediately selected."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43df7a..0x43df8d",
+          "note": "Accepted actor action word low byte is set to action 2."
+        }
+      ],
+      "implementation": [
+        "findFriendlyMergeTarget",
+        "unitWord"
+      ],
+      "tests": [
+        "tests/test_v199_friendly_ai_actionword_browser.py",
+        "tests/test_v199_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static native candidate scan plus deterministic Chromium shadow/native divergence regression; no frame-by-frame original Windows capture was performed."
+      ],
+      "first_restored_version": "V199"
     }
   ]
 }
