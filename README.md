@@ -1,15 +1,25 @@
-# 모나크모나크 — V195 원본 패리티 복원판
+# 모나크모나크 — V196 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V195도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V196도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V195 LITE 웹 기본판.
-- `monarch_v195_lite.html`: 배포본과 바이트 동일한 V195 보관본.
+- `index.html`: V196 LITE 웹 기본판.
+- `monarch_v196_lite.html`: 배포본과 바이트 동일한 V196 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V196: 사망 중 점유 슬롯의 접촉 차단 복원
+
+원본은 병력이 사망 상태에 들어가도 사망 애니메이션이 끝나 슬롯이 실제 해제되기 전까지 그 슬롯을 점유된 것으로 취급합니다. 적 접촉 경로 `0x440a77..0x440a93`과 아군 합류 경로 `0x440d19..0x440d37` 모두 death flag `0x4`를 확인하고 return 5로 접촉을 막습니다.
+
+V195는 브라우저의 `alive=false`만 보고 `exchange()` 초입에서 return 0을 해 사망 중 슬롯을 빈칸처럼 취급할 수 있었습니다. V196은 접촉 대상의 `alive` 조기 종료를 제거하고, 원본 death flag 판정까지 진행하게 복원했습니다.
+
+Chromium RED/GREEN에서 적·아군 사망 중 슬롯 모두 `stepCellContact()`가 실제 점유자를 찾는 상태에서 V195 return 0 → V196 return 5로 교정됐고, 공격 병력 수치는 변하지 않았습니다.
+
+V196 보고서: [V196_ORIGINAL_COMPARISON_REPORT.md](V196_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V195: 장군 판정의 원본 0x0800 비트 복원
 
@@ -132,12 +142,13 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V195 검증 범위
+## V196 검증 범위
 
-GitHub Actions run `36655201357`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36655774578`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
+- V196 dying occupied-slot contact RED/GREEN Chromium regression
 - V195 native commander-bit combat RED/GREEN Chromium regression
 - V194 killer-faction combat death-SFX RED/GREEN Chromium regression
 - V193 native action-word combat gate RED/GREEN Chromium regression
@@ -147,15 +158,16 @@ GitHub Actions run `36655201357`에서 다음 게이트가 모두 통과했습�
 - V190 승강기 경로·플랫폼·실제 탑승 Chromium regression
 - V188 same-pass 울타리 종료 Chromium regression
 - V187 자기 기지 제외 Chromium regression
-- V194→V195 역패치 전체 바이트 동일성
+- V195→V196 역패치 전체 바이트 동일성
 - STAGES/SOUND_DATA 및 Base64 23개 동일
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V195 LITE Git blob: `6877f4648bb1958309f808ed9de3dc48d1c8b969`.
+테스트된 V196 LITE Git blob: `df4f5dad7a261959b6b5902dc8ffafa5f6aa53ae`.
 
 ## 이전 수정
 
+- V196: 사망 애니메이션 중 점유 슬롯을 원본처럼 접촉 차단 상태로 유지.
 - V195: 장군 고정 피해 판정을 원본 action word의 0x0800 비트만 사용하도록 복원.
 - V194: 전투 사망 효과음을 원본처럼 치명타를 가한 세력에서 선택.
 - V193: 전투 금지 상태 0x11을 원본처럼 action word low byte에서 판독.
