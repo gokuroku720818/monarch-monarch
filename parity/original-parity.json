@@ -577,6 +577,44 @@
         "Confirmed from static executable action-word reads plus deterministic Chromium divergence tests; no frame-by-frame original Windows runtime capture was performed."
       ],
       "first_restored_version": "V193"
+    },
+    {
+      "id": "combat.killer-faction-death-sfx",
+      "domain": "combat",
+      "status": "CONFIRMED",
+      "description": "Combat death SFX LM0030..LM0034 is selected from the faction of the lethal striker/counterattacker, not the faction of the unit that died.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x436217..0x436233",
+          "note": "Initializes faction sound-index table 0x4c180c to 0,1,2,3,4."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440bcb..0x440be6",
+          "note": "Defender-death path reads the acting unit faction, maps through 0x4c180c, adds 30 and plays the sound."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440cca..0x440ce5",
+          "note": "Actor-death-after-retaliation path reads the contacted/counterattacking unit faction, maps it and adds 30."
+        }
+      ],
+      "implementation": [
+        "exchange",
+        "originalSfx"
+      ],
+      "tests": [
+        "tests/test_v194_combat_sfx_browser.py",
+        "tests/test_v194_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static executable faction-table/sound call flow plus Chromium WAV-payload interception; no frame-by-frame original Windows runtime capture was performed."
+      ],
+      "first_restored_version": "V194"
     }
   ]
 }
