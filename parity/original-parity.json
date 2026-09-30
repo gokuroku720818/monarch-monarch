@@ -978,6 +978,42 @@
         "Confirmed from static executable control flow plus deterministic Chromium RED/GREEN; no frame-by-frame original Windows runtime capture was performed."
       ],
       "first_restored_version": "V204"
+    },
+    {
+      "id": "ai.enemy-occupied-dying-target",
+      "domain": "cpu-ai",
+      "status": "CONFIRMED",
+      "description": "Enemy CPU target enumeration treats a dying unit slot as eligible while the native occupied bit remains set; browser alive=false alone must not suppress that slot before cleanup.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43dad4..0x43dae9",
+          "note": "Candidate +0x124 is filtered only by occupied bit 0x1."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43daf0..0x43db8f",
+          "note": "Self/reach/faction/native-commander filtering follows without any death-bit 0x4 test."
+        },
+        {
+          "type": "report",
+          "source": "V196_ORIGINAL_COMPARISON_REPORT.md",
+          "note": "Native death lifetime retains slot occupancy until cleanup."
+        }
+      ],
+      "implementation": [
+        "findEnemyUnitTarget"
+      ],
+      "tests": [
+        "tests/test_v205_enemy_dying_target_browser.py",
+        "tests/test_v205_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed for enemy CPU target enumeration only; friendly merge and generic follow lifetime remain separate verification targets."
+      ],
+      "first_restored_version": "V205"
     }
   ]
 }
