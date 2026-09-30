@@ -539,6 +539,44 @@
         "Confirmed from static executable exchange/death control flow plus deterministic Chromium regression; no frame-by-frame original Windows runtime capture was performed."
       ],
       "first_restored_version": "V192"
+    },
+    {
+      "id": "combat.native-action-word-gate",
+      "domain": "combat",
+      "status": "CONFIRMED",
+      "description": "Combat entry rejects native action state 0x11 by reading the low byte of each unit's +0x10 action word, not a browser shadow state field.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440a50..0x440a62",
+          "note": "Acting unit WORD +0x10 is masked with 0xff and compared to 0x11."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440a64..0x440a75",
+          "note": "Contacted unit WORD +0x10 is masked with 0xff and compared to 0x11."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x440a77..0x440a93",
+          "note": "Contacted-slot death flag bit 0x4 is checked only after both action-word low-byte gates."
+        }
+      ],
+      "implementation": [
+        "exchange",
+        "unitWord"
+      ],
+      "tests": [
+        "tests/test_v193_actionword_combat_browser.py",
+        "tests/test_v193_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static executable action-word reads plus deterministic Chromium divergence tests; no frame-by-frame original Windows runtime capture was performed."
+      ],
+      "first_restored_version": "V193"
     }
   ]
 }
