@@ -1,15 +1,25 @@
-# 모나크모나크 — V192 원본 패리티 복원판
+# 모나크모나크 — V193 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V192도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V193도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V192 LITE 웹 기본판.
-- `monarch_v192_lite.html`: 배포본과 바이트 동일한 V192 보관본.
+- `index.html`: V193 LITE 웹 기본판.
+- `monarch_v193_lite.html`: 배포본과 바이트 동일한 V193 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V193: 전투 금지 상태의 원본 action word 판독 복원
+
+원본 `lm_win.exe 0x440a50..0x440a75`는 교전 전에 양쪽 유닛 구조체 `+0x10`의 **행동 워드 low byte**를 읽고 `0x11`이면 전투를 거부합니다. 브라우저용 보조 `state` 값은 이 판정의 원본 근거가 아닙니다.
+
+V192는 `state & 0xff`를 사용해서 `state`와 `unitWord`가 어긋나는 경계에서 전투 허용/거부가 반대로 될 수 있었습니다. V193은 `unitWord & 0xff`를 사용하도록 복원했습니다.
+
+Chromium RED/GREEN에서 `state=0x11, unitWord low=1`은 V192의 오거부에서 V193의 정상 교전으로, `state=1, unitWord low=0x11`은 V192의 오교전에서 V193의 정상 거부(return 5)로 바뀌는 것을 LITE/FULL 모두 확인했습니다.
+
+V193 보고서: [V193_ORIGINAL_COMPARISON_REPORT.md](V193_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V192: 치명타 이후 원본 반격·교환 종료 순서 복원
 
@@ -102,27 +112,29 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V192 검증 범위
+## V193 검증 범위
 
-GitHub Actions run `36653627000`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36654140042`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
+- V193 native action-word combat gate RED/GREEN Chromium regression
 - V192 lethal-hit retaliation/return-code RED/GREEN Chromium regression
 - V191 strict bounded reach RED/GREEN Chromium regression
 - V189 목표측 route tie backtrack Node/Chromium regression
 - V190 승강기 경로·플랫폼·실제 탑승 Chromium regression
 - V188 same-pass 울타리 종료 Chromium regression
 - V187 자기 기지 제외 Chromium regression
-- V191→V192 역패치 전체 바이트 동일성
+- V192→V193 역패치 전체 바이트 동일성
 - STAGES/SOUND_DATA 및 Base64 23개 동일
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V192 LITE Git blob: `55bba7d749d0d88fa29e6cfb091dc3357393e8e7`.
+테스트된 V193 LITE Git blob: `ec7dc0a2cef14fa575ccfc4207cbd2431c372387`.
 
 ## 이전 수정
 
+- V193: 전투 금지 상태 0x11을 원본처럼 action word low byte에서 판독.
 - V192: 치명타 방어자의 같은 교환 반격 유지 및 반격으로 공격자 사망 시 return 6 복원.
 - V191: bounded reach-map의 반경을 원본처럼 배타적 상한으로 처리.
 - V190: 승강기 수직 길찾기·이동 플랫폼·탑승 복원.
