@@ -1,15 +1,23 @@
-# 모나크모나크 — V202 원본 패리티 복원판
+# 모나크모나크 — V203 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V202도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V203도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V202 LITE 웹 기본판.
-- `monarch_v202_lite.html`: 배포본과 바이트 동일한 V202 보관본.
+- `index.html`: V203 LITE 웹 기본판.
+- `monarch_v203_lite.html`: 배포본과 바이트 동일한 V203 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V203: 중립 AI의 사망 중 점유 슬롯 타깃 유지
+
+원본 `lm_win.exe 0x43d44c..0x43d4e8`의 중립 사냥 스캔은 대상의 브라우저식 `alive` 값이 아니라 **원본 슬롯 점유 비트 0x1**을 봅니다. 사망 애니메이션 중에도 슬롯이 실제 해제되기 전까지 점유 비트가 유지되므로, 해당 슬롯은 중립 AI의 타깃 후보로 남습니다.
+
+V202는 `alive=false`이면 즉시 후보에서 제외했고 추적 helper도 같은 이유로 경로를 거부했습니다. V203은 **faction 4 중립 AI에 한해 `dying=true`이며 슬롯이 아직 존재하는 대상을 계속 추적 후보로 허용**합니다. Chromium RED/GREEN에서 V202가 건너뛰던 사망 중 슬롯을 V203은 정확히 action 3 대상으로 선택했습니다.
+
+V203 보고서: [V203_ORIGINAL_COMPARISON_REPORT.md](V203_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V202: 중립 AI 사냥의 성 HP 장군 억제 제거
 
@@ -200,9 +208,9 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V202 검증 범위
+## V203 검증 범위
 
-GitHub Actions run `36671506737`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36671992221`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
@@ -226,10 +234,11 @@ GitHub Actions run `36671506737`에서 다음 게이트가 모두 통과했습�
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V202 LITE Git blob: `8d678a731679a8be1043ee1aabf6a889cf0b0974`.
+테스트된 V203 LITE Git blob: `99bf93612175400b45feaf73d2a7b52292d7b381`.
 
 ## 이전 수정
 
+- V203: 중립 AI가 사망 애니메이션 중이지만 아직 점유된 슬롯을 원본처럼 타깃 후보로 유지.
 - V202: 중립 AI 사냥에서 성 HP/브라우저 king 라벨 기반 비원본 억제 제거.
 - V201: CPU 길찾기 차단표와 아군 합류 후보의 장군 판정을 원본 0x0800 비트만 사용하도록 복원.
 - V200: CPU 적 장군 표적 스캔에서 성 HP/type 라벨 보정을 제거하고 원본 0x0800 비트만 사용.
