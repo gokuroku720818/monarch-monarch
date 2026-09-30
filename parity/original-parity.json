@@ -866,6 +866,44 @@
         "Confirmed from static native block/target scans plus deterministic Chromium shadow/native divergence regression; no frame-by-frame original Windows capture was performed."
       ],
       "first_restored_version": "V201"
+    },
+    {
+      "id": "ai.neutral-hunt-no-castle-commander-suppression",
+      "domain": "neutral-ai",
+      "status": "CONFIRMED",
+      "description": "Neutral faction hunt scans reachable occupied different-faction unit slots without suppressing commander targets while their castle remains; faction-4 action 3 may therefore pursue a reachable commander regardless of castle HP.",
+      "evidence": [
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43d3db..0x43d5f3",
+          "note": "Neutral hunt reach-map and unit-slot scan."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43d4d4..0x43d4e8",
+          "note": "Candidate eligibility compares faction only; no castle-HP or commander gate."
+        },
+        {
+          "type": "exe",
+          "source": "lm_win.exe",
+          "address": "0x43d56d..0x43d5da",
+          "note": "Accepted target is routed, stored by slot, and action low byte becomes 3."
+        }
+      ],
+      "implementation": [
+        "planOriginalNeutralSpecial",
+        "trackedUnitRoute"
+      ],
+      "tests": [
+        "tests/test_v202_neutral_hunt_browser.py",
+        "tests/test_v202_asset_stability.py"
+      ],
+      "limitations": [
+        "Confirmed from static executable control flow plus deterministic Chromium RED/GREEN; player/manual pursuit and non-neutral CPU chase gates are not changed by this rule."
+      ],
+      "first_restored_version": "V202"
     }
   ]
 }
