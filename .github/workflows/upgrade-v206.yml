@@ -2,11 +2,11 @@ name: Verify and stage V206 friendly CPU dying-merge parity
 on:
   push:
     branches:
-      - restore/v206-cpu-dying-target
+      - restore/v206-friendly-dying-merge
     paths:
       - 'parity/original-parity.json'
       - 'scripts/upgrade_v206.py'
-      - 'tests/test_v206_enemy_dying_target_browser.py'
+      - 'tests/test_v206_friendly_dying_merge_browser.py'
       - 'tests/test_v206_asset_stability.py'
       - 'V206_ORIGINAL_COMPARISON_REPORT.md'
       - '.github/workflows/upgrade-v206.yml'
@@ -39,7 +39,8 @@ jobs:
           python3 tests/test_original_parity.py monarch_v206_lite.html
       - name: Verify V206 friendly CPU and retained AI/combat regressions
         run: |
-          python3 tests/test_v206_enemy_dying_target_browser.py monarch_v204_lite.html monarch_v206_lite.html
+          python3 tests/test_v206_friendly_dying_merge_browser.py monarch_v205_lite.html monarch_v206_lite.html
+          python3 tests/test_v205_enemy_dying_target_browser.py monarch_v204_lite.html monarch_v206_lite.html
           python3 tests/test_v204_neutral_counter_browser.py monarch_v203_lite.html monarch_v206_lite.html
           python3 tests/test_v203_neutral_dying_target_browser.py monarch_v202_lite.html monarch_v206_lite.html
           python3 tests/test_v202_neutral_hunt_browser.py monarch_v201_lite.html monarch_v206_lite.html
