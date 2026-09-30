@@ -1,6 +1,6 @@
-# 모나크모나크 — V189 원본 패리티 복원판
+# 모나크모나크 — V190 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V189도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V190도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
@@ -10,6 +10,16 @@
 - `monarch_v189_lite.html`: 배포본과 바이트 동일한 V189 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V190: 원본 승강기 수직 길찾기·탑승 복원
+
+원본 `lm_win.exe`의 승강기는 단순한 높이 점프가 아닙니다. 타일 124의 **숨은 under-tile(120~123)** 을 보존하고, 거리맵에는 별도의 수직 up/down 상태를 만들며, 목표측 역추적에서 전용 경로 바이트 `0xFE/0xFF`를 사용합니다. 플랫폼 자체도 한 simulation pass마다 z 한 칸씩 움직이고 120/121 끝점에서 방향을 바꾼 뒤 30 pass 정지하며 탑승 병력을 함께 이동시킵니다.
+
+V189에서는 이 별도 수직 분기가 아직 빠져 있어 원본 `M_014`의 (11,27,z=8..16) 승강기 축을 건널 수 없었습니다. V190은 V189의 CARD 동률 역추적을 유지하면서 **승강기 전용 거리맵·경로 재구성·움직이는 124 플랫폼·실제 탑승/하차**를 복원했습니다.
+
+Chromium RED/GREEN에서 exact V189는 해당 경로가 `null`이고, V190은 8개의 `0xFE` 수직 단계를 포함한 경로를 만든 뒤 실제 병력이 승강기를 타고 z=8→16으로 이동해 상층 출구까지 도착하는 것을 확인했습니다. 75개 맵 × 10 pass 검사에서도 최대 4개 lift record와 visible 124 개수 invariant가 유지됩니다.
+
+V190 보고서: [V190_ORIGINAL_COMPARISON_REPORT.md](V190_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V189: 최단경로 동률 시 원본의 목표측 역추적 순서 복원
 
@@ -72,9 +82,9 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V189 검증 범위
+## V190 검증 범위
 
-GitHub Actions run `36531198664`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36650191967`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
@@ -86,7 +96,7 @@ GitHub Actions run `36531198664`에서 다음 게이트가 모두 통과했습�
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V189 LITE Git blob: `6acb643ee40954a53f2e71c86caea10969e986f8`.
+테스트된 V190 LITE Git blob: `101c44bbd5ca45ea805bfb344c9aae03adba5401`.
 
 ## 이전 수정
 
