@@ -1,0 +1,27 @@
+name: Diagnose V207 follow lifetime
+on:
+  push:
+    branches: [restore/v207-follow-dying-slot]
+    paths: ['.github/workflows/diagnose-v207.yml']
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('index.html').read_text()
+          for n in ["if((u.actionCode===2||u.actionCode===3)","function trackedUnitRoute","__MONARCH_TEST__={","function tick","function step","function sim"]:
+              print("\n===== "+n+" =====")
+              pos=0;count=0
+              while True:
+                  i=s.find(n,pos)
+                  if i<0 or count>=8: break
+                  print(s[max(0,i-1000):min(len(s),i+5000)].replace("\n"," "))
+                  print("\n---")
+                  pos=i+len(n);count+=1
+              print("COUNT",count)
+          PY
