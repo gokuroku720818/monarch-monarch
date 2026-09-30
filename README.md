@@ -1,15 +1,25 @@
-# 모나크모나크 — V203 원본 패리티 복원판
+# 모나크모나크 — V204 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V203도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V204도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V203 LITE 웹 기본판.
-- `monarch_v203_lite.html`: 배포본과 바이트 동일한 V203 보관본.
+- `index.html`: V204 LITE 웹 기본판.
+- `monarch_v204_lite.html`: 배포본과 바이트 동일한 V204 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V204: 중립 이동 중 hunt counter 오증가 복원
+
+원본 `lm_win.exe 0x43d09a..0x43d209`는 중립 병력의 이동 step이 진행 중이면 `+0x11c >= 0` 분기에서 바로 이동 처리기로 들어가며, hunt/wander 홀짝을 결정하는 `+0x0A` counter를 증가시키지 않습니다.
+
+V203은 active path/target이 있어도 `planOriginalNeutralSpecial()` 진입 즉시 counter를 올려 사냥 시도 홀짝이 한 pass 일찍 바뀔 수 있었습니다. V204는 active movement 동안 counter를 그대로 유지합니다.
+
+Chromium RED/GREEN에서 counter 7인 중립 유닛의 action 15와 action 1 모두 V203은 8로 증가했지만 V204는 7을 유지했습니다.
+
+V204 보고서: [V204_ORIGINAL_COMPARISON_REPORT.md](V204_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V203: 중립 AI의 사망 중 점유 슬롯 타깃 유지
 
@@ -208,9 +218,9 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V203 검증 범위
+## V204 검증 범위
 
-GitHub Actions run `36671992221`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36674068410`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
@@ -234,10 +244,11 @@ GitHub Actions run `36671992221`에서 다음 게이트가 모두 통과했습�
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V203 LITE Git blob: `99bf93612175400b45feaf73d2a7b52292d7b381`.
+테스트된 V204 LITE Git blob: `db3b87755bc7c39faa6a90437d49290bfa79ae62`.
 
 ## 이전 수정
 
+- V204: 중립 이동 step 진행 중 hunt/wander counter가 증가하지 않도록 원본 타이밍 복원.
 - V203: 중립 AI가 사망 애니메이션 중이지만 아직 점유된 슬롯을 원본처럼 타깃 후보로 유지.
 - V202: 중립 AI 사냥에서 성 HP/브라우저 king 라벨 기반 비원본 억제 제거.
 - V201: CPU 길찾기 차단표와 아군 합류 후보의 장군 판정을 원본 0x0800 비트만 사용하도록 복원.
