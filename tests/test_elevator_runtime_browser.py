@@ -34,7 +34,7 @@ with sync_playwright() as p:
           for(;n<250;n++){update(1);if(u.elevatorRide)rode=true;if(!u.path&&Math.floor(u.x)===10&&Math.floor(u.y)===27&&Math.round(u.z)===16)break}
           return {path:path&&path.map(q=>[q.x,q.y,q.z,q.dir]),reach:reach.dist.get('10,27,16')??null,before,after,rider:{rode,n:n+1,x:u.x,y:u.y,z:u.z,path:!!u.path,alive:u.alive,actionCode:u.actionCode},err:__MONARCH_ERRORS__||[]};
         }''')
-        expected=[[11,27,8,0],...Array.from({length:8},(_,i)=>[11,27,9+i,0xfe]),[10,27,16,0]]
+        expected=[[11,27,8,0]]+[[11,27,9+i,0xfe] for i in range(8)]+[[10,27,16,0]]
         assert result['path']==expected,result
         assert result['reach']==10,result
         assert result['before']['z8']==[124,120],result
