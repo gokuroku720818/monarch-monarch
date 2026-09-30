@@ -1,0 +1,30 @@
+name: Probe V207 follow-slot lifetime parity
+on:
+  push:
+    branches: [restore/v207-follow-dying-slot]
+    paths:
+      - 'scripts/upgrade_v207.py'
+      - 'tests/test_v207_follow_slot_lifetime_browser.py'
+      - '.github/workflows/probe-v207.yml'
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Install Chromium
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - run: python3 scripts/upgrade_v207.py monarch_v206_lite.html /tmp/v207.html
+      - run: python3 tests/test_v207_follow_slot_lifetime_browser.py monarch_v206_lite.html /tmp/v207.html
+      - run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          b=Path('/tmp/v207.html').read_bytes()
+          print('TARGET',hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest())
+          PY
