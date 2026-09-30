@@ -1,0 +1,34 @@
+name: Probe V206 friendly dying-merge parity
+on:
+  push:
+    branches: [restore/v206-friendly-dying-merge]
+    paths:
+      - 'scripts/upgrade_v206.py'
+      - 'tests/test_v206_friendly_dying_merge_browser.py'
+      - '.github/workflows/probe-v206.yml'
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Chromium
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Generate candidate
+        run: python3 scripts/upgrade_v206.py monarch_v205_lite.html /tmp/v206.html
+      - name: RED GREEN
+        run: python3 tests/test_v206_friendly_dying_merge_browser.py monarch_v205_lite.html /tmp/v206.html
+      - name: Candidate blob
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          b=Path('/tmp/v206.html').read_bytes()
+          print('TARGET',hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest())
+          PY
