@@ -1,15 +1,25 @@
-# 모나크모나크 — V196 원본 패리티 복원판
+# 모나크모나크 — V197 원본 패리티 복원판
 
-원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V196도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
+원작 Windows 실행 파일·데이터·맵·효과음과 대조하며 개발 중인 비공식 HTML 복원판입니다. **V197도 아직 원작 전체의 장시간 동적 1:1 동일성을 주장하지 않습니다.** 원작 소프트웨어와 자산의 권리는 각 권리자에게 있습니다.
 
 ## 게임 실행
 
 **GitHub Pages:** https://gokuroku720818.github.io/monarch-monarch/
 
-- `index.html`: V196 LITE 웹 기본판.
-- `monarch_v196_lite.html`: 배포본과 바이트 동일한 V196 보관본.
+- `index.html`: V197 LITE 웹 기본판.
+- `monarch_v197_lite.html`: 배포본과 바이트 동일한 V197 보관본.
 - 원본 맵 75개와 WAV 효과음 159개 원본 바이트 검증을 유지합니다.
 - BGM 포함 FULL HTML은 저장소에 커밋하지 않고 별도 완성 ZIP에 포함합니다.
+
+## V197: 아군 병합의 장군 판정 원본 비트 복원
+
+원본 `lm_win.exe 0x440d5c..0x440d98`의 아군 병합 helper는 브라우저의 `type='king'` 같은 보조 라벨을 보지 않고, 양쪽 유닛 행동 워드 `+0x10`의 **0x0800 장군 비트만** 검사합니다.
+
+V196은 `type==='king'`도 별도로 병합 금지 조건에 포함해, 보조 라벨과 원본 행동 워드가 어긋난 경계에서 원작보다 넓게 병합을 막았습니다. V197은 이 브라우저 전용 조건을 제거하고 원본 0x0800 비트를 단일 근거로 사용합니다.
+
+Chromium RED/GREEN에서 `type='king'`이지만 0x0800 비트가 없는 actor/target은 V196의 병합 거부에서 V197의 정상 병합으로 교정됐고, 반대로 `type='soldier'`라도 0x0800 비트가 있으면 계속 병합을 거부하는 것을 확인했습니다.
+
+V197 보고서: [V197_ORIGINAL_COMPARISON_REPORT.md](V197_ORIGINAL_COMPARISON_REPORT.md)
 
 ## V196: 사망 중 점유 슬롯의 접촉 차단 복원
 
@@ -142,12 +152,13 @@ V184 보고서: [V184_ORIGINAL_COMPARISON_REPORT.md](V184_ORIGINAL_COMPARISON_RE
 
 설계: [Original-Parity Restoration Design](docs/superpowers/specs/2026-09-28-monarch-original-parity-design.md)
 
-## V196 검증 범위
+## V197 검증 범위
 
-GitHub Actions run `36655774578`에서 다음 게이트가 모두 통과했습니다.
+GitHub Actions run `36656086840`에서 다음 게이트가 모두 통과했습니다.
 
 - 원본 75 MAP, 제목·장군 마커, WAV 159개
 - V173~V188 focused regressions
+- V197 native merge commander-bit RED/GREEN Chromium regression
 - V196 dying occupied-slot contact RED/GREEN Chromium regression
 - V195 native commander-bit combat RED/GREEN Chromium regression
 - V194 killer-faction combat death-SFX RED/GREEN Chromium regression
@@ -158,15 +169,16 @@ GitHub Actions run `36655774578`에서 다음 게이트가 모두 통과했습�
 - V190 승강기 경로·플랫폼·실제 탑승 Chromium regression
 - V188 same-pass 울타리 종료 Chromium regression
 - V187 자기 기지 제외 Chromium regression
-- V195→V196 역패치 전체 바이트 동일성
+- V196→V197 역패치 전체 바이트 동일성
 - STAGES/SOUND_DATA 및 Base64 23개 동일
 - 75개 스테이지 × 10 simulation pass invariant smoke
 - JavaScript syntax 및 배포 archive identity
 
-테스트된 V196 LITE Git blob: `df4f5dad7a261959b6b5902dc8ffafa5f6aa53ae`.
+테스트된 V197 LITE Git blob: `cec337794d03e50508a08cadb1938a646ac0c1ff`.
 
 ## 이전 수정
 
+- V197: 아군 병합의 장군 판정을 원본 action word 0x0800 비트만 사용하도록 복원.
 - V196: 사망 애니메이션 중 점유 슬롯을 원본처럼 접촉 차단 상태로 유지.
 - V195: 장군 고정 피해 판정을 원본 action word의 0x0800 비트만 사용하도록 복원.
 - V194: 전투 사망 효과음을 원본처럼 치명타를 가한 세력에서 선택.
